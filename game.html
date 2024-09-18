@@ -30,16 +30,167 @@ context.font = "30px Arial";
 context.textAlign = "center";
 context.fillStyle = 'blue';
 
+let premadeMaps = [
+    {
+        w:[{x:7, y:1}, {x:1, y:9}, {x:7, y:11}, {x:1, y:12}],
+        exit:{x:6, y:13},
+        b:{x:0, y:0},
+        t:{x:9, y:5},
+        e:[{x:2, y:2}, {x:5, y:2}, {x:3, y:4}],
+        p:[{x:3, y:12}, {x:2, y:13}, {x:4, y:13}]
+    },
+    {
+        w:[{x:6, y:6}, {x:6, y:8}, {x:1, y:9}, {x:5, y:12}, {x:1, y:13}],
+        exit:{x:5, y:4},
+        b:{x:4, y:3},
+        t:{x:0, y:0},
+        e:[{x:3, y:6}, {x:8, y:7}, {x:2, y:11}],
+        p:[{x:7, y:12}, {x:6, y:13}, {x:8, y:13}]
+    },
+    {
+        w:[{x:9, y:4}, {x:4, y:8}, {x:0, y:10}, {x:7, y:10}],
+        exit:{x:4, y:10},
+        b:{x:6, y:1},
+        t:{x:9, y:7},
+        e:[{x:3, y:1}, {x:4, y:3}, {x:7, y:4}, {x:2, y:5}],
+        p:[{x:3, y:12}, {x:2, y:13}, {x:4, y:13}]
+    },
+    {
+        w:[{x:2, y:0}, {x:6, y:2}, {x:8, y:2}, {x:3, y:5}],
+        exit:{x:5, y:13},
+        b:{x:2, y:2},
+        t:{x:7, y:1},
+        e:[{x:7, y:6}, {x:1, y:7}, {x:1, y:13}],
+        p:[{x:9, y:11}, {x:8, y:12}, {x:9, y:13}]
+    },
+    {
+        w:[{x:5, y:8}, {x:5, y:10}, {x:8, y:13}, {x:6, y:14}],
+        exit:{x:6, y:13},
+        b:{x:8, y:3},
+        t:{x:0, y:3},
+        e:[{x:5, y:2}, {x:5, y:4}, {x:6, y:5}, {x:8, y:6}],
+        p:[{x:2, y:12}, {x:1, y:13}, {x:3, y:13}]
+    },
+    {
+        w:[{x:5, y:0}, {x:3, y:2}, {x:2, y:4}, {x:5, y:6}, {x:3, y:14}],
+        exit:{x:0, y:8},
+        b:{x:9, y:14},
+        t:{x:0, y:0},
+        e:[{x:1, y:0}, {x:8, y:2}, {x:4, y:12}],
+        p:[{x:2, y:7}, {x:3, y:8}, {x:2, y:9}]
+    },
+    {
+        w:[{x:2, y:5}, {x:2, y:8}, {x:9, y:12}, {x:8, y:14}],
+        exit:{x:8, y:13},
+        b:{x:4, y:1},
+        t:{x:0, y:11},
+        e:[{x:5, y:4}, {x:6, y:4}, {x:4, y:6}, {x:8, y:6}],
+        p:[{x:8, y:12}, {x:7, y:13}, {x:9, y:13}]
+    },
+    {
+        w:[{x:1, y:0}, {x:7, y:4}, {x:9, y:6}, {x:7, y:8}, {x:0, y:9}],
+        exit:{x:8, y:11},
+        b:{x:7, y:6},
+        t:{x:0, y:5},
+        e:[{x:2, y:4}, {x:3, y:8}, {x:6, y:10}],
+        p:[{x:1, y:13}, {x:0, y:14}, {x:2, y:14}]
+    },
+    {
+        w:[{x:2, y:0}, {x:3, y:3}, {x:1, y:6}, {x:8, y:10}, {x:1, y:14}],
+        exit:{x:5, y:11},
+        b:{x:1, y:2},
+        t:{x:8, y:3},
+        e:[{x:5, y:2}, {x:6, y:5}, {x:1, y:8}],
+        p:[{x:6, y:12}, {x:5, y:13}, {x:7, y:13}]
+    },
+    {
+        w:[{x:5, y:0}, {x:3, y:1}, {x:9, y:1}, {x:0, y:2}, {x:2, y:10}],
+        exit:{x:8, y:14},
+        b:{x:7, y:12},
+        t:{x:1, y:1},
+        e:[{x:7, y:7}, {x:4, y:10}, {x:1, y:13}],
+        p:[{x:1, y:5}, {x:2, y:6}, {x:1, y:7}]
+    },
+    {
+        w:[{x:9, y:1}, {x:4, y:2}, {x:4, y:3}, {x:1, y:4}, {x:5, y:4}],
+        exit:{x:0, y:1},
+        b:{x:3, y:13},
+        t:{x:8, y:1},
+        e:[{x:3, y:10}, {x:1, y:12}, {x:5, y:12}],
+        p:[{x:2, y:4}, {x:4, y:4}, {x:3, y:5}]
+    },
+    {
+        w:[{x:2, y:1}, {x:5, y:6}, {x:4, y:8}, {x:0, y:14}],
+        exit:{x:2, y:5},
+        b:{x:7, y:13},
+        t:{x:9, y:1},
+        e:[{x:1, y:10}, {x:8, y:10}, {x:3, y:13}],
+        p:[{x:3, y:2}, {x:4, y:3}, {x:3, y:4}]
+    },
+    {
+        w:[{x:7, y:1}, {x:4, y:7}, {x:1, y:12}, {x:5, y:12}],
+        exit:{x:1, y:13},
+        b:{x:0, y:0},
+        t:{x:9, y:7},
+        e:[{x:6, y:1}, {x:2, y:2}, {x:0, y:3}, {x:5, y:4}],
+        p:[{x:3, y:10}, {x:2, y:11}, {x:4, y:10}]
+    },
+    {
+        w:[{x:3, y:5}, {x:3, y:7}, {x:8, y:9}, {x:3, y:12}],
+        exit:{x:8, y:4},
+        b:{x:0, y:14},
+        t:{x:3, y:1},
+        e:[{x:0, y:9}, {x:4, y:10}, {x:7, y:13}],
+        p:[{x:4, y:5}, {x:6, y:5}, {x:5, y:6}]
+    }
+];
+
+
+
 let mousedown = false;
 
-let closeCombatArchetype = {range:1, movement:4, maxhp:20, hp:20, attack:4, defense:2, speed:3, ability:[]};
-let distanceArchetype = {range:2, movement:3, maxhp:18, hp:18, attack:3, defense:3, speed:2, ability:[]};
-let supportArchetype = {range:2, movement:3, maxhp:15, hp:15, attack:1, defense:0, speed:1, ability:[]};
+let closeCombatArchetype = {range:1, movement:4, maxhp:20, hp:20, attack:4, defense:2, speed:3};
+let distanceArchetype = {range:2, movement:3, maxhp:18, hp:18, attack:3, defense:3, speed:2};
+let supportArchetype = {range:2, movement:3, maxhp:15, hp:15, attack:1, defense:0, speed:1};
 
 let archetypes = [closeCombatArchetype, distanceArchetype, supportArchetype];
 
+function statsRange(ref)
+{
+  let res = Math.floor(Math.random() * 4) + ref - 1;
+  if (res < 0)
+    res = 0;
+  return res;
+}
+
+class Unit {
+  constructor(type) {
+    this.range = archetypes[type].range;
+    this.movement = archetypes[type].movement;
+    this.maxhp = statsRange(archetypes[type].maxhp);
+    this.hp = this.maxhp;
+    this.attack = statsRange(archetypes[type].attack);
+    this.defense = statsRange(archetypes[type].defense);
+    this.speed = statsRange(archetypes[type].speed);
+    this.exp = 0;
+    this.ability = [];
+    this.x = 0;
+    this.y = 0;
+  }
+}
+
 let playerUnits = [];
 let enemyUnits = [];
+
+function generateEnemies() {
+  enemyUnits = [];
+  let nbUnit = Math.floor(Math.random() * 2) + 3;
+  for (let i = 0; i < nbUnit; i++) {
+    let type = Math.floor(Math.random() * 3);
+    walls.push(new Unit(type));
+  }
+}
+
 let boss = closeCombatArchetype;
 let thief = closeCombatArchetype;
 
