@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Rogue Tactics</title>
+  <meta charset="UTF-8">
+  <style>
+  html, body {
+    height: 100%;
+    margin: 0;
+  }
+
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  canvas {
+    border: 1px solid black;
+  }
+  </style>
+</head>
+<body>
+<canvas width="320" height="480" id="game"></canvas>
+<script>
+const canvas = document.getElementById('game');
+const context = canvas.getContext('2d')
+
+context.font = "30px Arial";
+context.textAlign = "center";
+context.fillStyle = 'blue';
+
+let mousedown = false;
+
+let closeCombatArchetype = {range:1, movement:4, maxhp:20, hp:20, attack:4, defense:2, speed:3, ability:[]};
+let distanceArchetype = {range:2, movement:3, maxhp:18, hp:18, attack:3, defense:3, speed:2, ability:[]};
+let supportArchetype = {range:2, movement:3, maxhp:15, hp:15, attack:1, defense:0, speed:1, ability:[]};
+
+let archetypes = [closeCombatArchetype, distanceArchetype, supportArchetype];
+
+let playerUnits = [];
+let enemyUnits = [];
+let boss = closeCombatArchetype;
+let thief = closeCombatArchetype;
+
+let grid = [];
+for (let i = 0; i < 10; i++)
+  for (let j = 0; j < 15; j++)
+    grid.push({x:i * 32, y:j * 32});
+
+let tileImage = new Image();
+tileImage.src = "tileset.png";
+let tileNumber = 3;
+
+function coordinate(x, y) {
+  return grid[y * 10 + x];
+}
+
+let walls = [];
+
+function compareWall(j) {
+  if (walls == [])
+    return false;
+  for (let i = 0; i < walls.length; i++)
+    if (walls[i].x == grid[j].x && walls[i].y == grid[j].y)
+      return true;
+  return false;
+}
+
+function wallPlacement() {
+  let nbWalls = Math.floor(Math.random() * 2) + 4;
+  for (let i = 0; i < nbWalls; i++) {
+    let posi = Math.floor(Math.random() * grid.length);
+    while (compareWall(posi))
+      posi = Math.floor(Math.random() * grid.length);
+    walls.push(grid[posi]);
+  }
+}
+
+let exit = 0;
+
+function generateNewMap() {
+  walls = [];
+  wallPlacement();
+  exit = Math.floor(Math.random() * grid.length);
+  while (compareWall(exit))
+    exit = Math.floor(Math.random() * grid.length);
+}
+
+let end = false;
+let menu = false;
+
+generateNewMap();
+
+function loop() {
+  requestAnimationFrame(loop);
+  context.clearRect(0,0,canvas.width,canvas.height);
+  if (menu) {
+    context.fillText("tap to start", canvas.width / 2, canvas.height - 10);
+  } else if (!end) {
+    for (let i = 0; i < grid.length; i++)
+      context.drawImage(tileImage, 0, 0, 32, 32, grid[i].x, grid[i].y, 32, 32);
+    for (let i = 0; i < walls.length; i++)
+      context.drawImage(tileImage, 2 * 32, 0, 32, 32, walls[i].x, walls[i].y, 32, 32);
+    context.drawImage(tileImage, 32, 0, 32, 32, grid[exit].x, grid[exit].y, 32, 32);
+  } else {
+    context.font = "20px Arial";
+    context.fillText("tap to restart", canvas.width / 2, canvas.height - 10);
+  }
+}
+
+document.addEventListener('mouseup', function(e) {
+  let relativeX = e.x - canvas.offsetLeft;
+  let relativeY = e.y - canvas.offsetTop;
+
+  mousedown = false;
+  if (lastX > relativeX) {
+    velocityX = -(lastX - relativeX) / 30;
+    directionX = -1;
+  } else if (lastX != relativeX) {
+    velocityX = (relativeX - lastX) / 30;
+    directionX = 1;
+  }
+  if (lastY > relativeY) {
+    velocityY = -(lastY - relativeY) / 30;
+    directionY = -1;
+  } else if (lastY != relativeY) {
+    velocityY = (relativeY - lastY) / 30;
+    directionY = 1;
+  }
+});
+
+document.addEventListener('mousedown', function(e) {
+  let relativeX = e.x - canvas.offsetLeft;
+  let relativeY = e.y - canvas.offsetTop;
+
+  if (menu) {
+    menu = false;
+    return;
+  }
+  if (end) {
+    menu = true;
+    end = false;
+  } else {
+  }
+  mousedown = true;
+});
+
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
