@@ -133,7 +133,7 @@ let premadeMaps = [
         b:{x:0, y:0},
         t:{x:9, y:7},
         e:[{x:6, y:1}, {x:2, y:2}, {x:0, y:3}, {x:5, y:4}],
-        p:[{x:3, y:10}, {x:2, y:11}, {x:4, y:10}]
+        p:[{x:3, y:10}, {x:2, y:11}, {x:4, y:11}]
     },
     {
         w:[{x:3, y:5}, {x:3, y:7}, {x:8, y:9}, {x:3, y:12}],
@@ -195,9 +195,10 @@ let boss = closeCombatArchetype;
 let thief = closeCombatArchetype;
 
 let grid = [];
-for (let i = 0; i < 10; i++)
-  for (let j = 0; j < 15; j++)
-    grid.push({x:i * 32, y:j * 32});
+for (let i = 0; i < 15; i++)
+  for (let j = 0; j < 10; j++)
+    grid.push({x:j * 32, y:i * 32});
+let map;
 
 let tileImage = new Image();
 tileImage.src = "tileset.png";
@@ -207,35 +208,9 @@ function coordinate(x, y) {
   return grid[y * 10 + x];
 }
 
-let walls = [];
-
-function compareWall(j) {
-  if (walls == [])
-    return false;
-  for (let i = 0; i < walls.length; i++)
-    if (walls[i].x == grid[j].x && walls[i].y == grid[j].y)
-      return true;
-  return false;
-}
-
-function wallPlacement() {
-  let nbWalls = Math.floor(Math.random() * 2) + 4;
-  for (let i = 0; i < nbWalls; i++) {
-    let posi = Math.floor(Math.random() * grid.length);
-    while (compareWall(posi))
-      posi = Math.floor(Math.random() * grid.length);
-    walls.push(grid[posi]);
-  }
-}
-
-let exit = 0;
-
 function generateNewMap() {
-  walls = [];
-  wallPlacement();
-  exit = Math.floor(Math.random() * grid.length);
-  while (compareWall(exit))
-    exit = Math.floor(Math.random() * grid.length);
+  let select = Math.floor(Math.random() * premadeMaps.length);
+  map = premadeMaps[select];
 }
 
 let end = false;
@@ -251,9 +226,15 @@ function loop() {
   } else if (!end) {
     for (let i = 0; i < grid.length; i++)
       context.drawImage(tileImage, 0, 0, 32, 32, grid[i].x, grid[i].y, 32, 32);
-    for (let i = 0; i < walls.length; i++)
-      context.drawImage(tileImage, 2 * 32, 0, 32, 32, walls[i].x, walls[i].y, 32, 32);
-    context.drawImage(tileImage, 32, 0, 32, 32, grid[exit].x, grid[exit].y, 32, 32);
+    for (let i = 0; i < map.w.length; i++)
+      context.drawImage(tileImage, 2 * 32, 0, 32, 32, coordinate(map.w[i].x, map.w[i].y).x, coordinate(map.w[i].x, map.w[i].y).y, 32, 32);
+    context.drawImage(tileImage, 32, 0, 32, 32, coordinate(map.exit.x, map.exit.y).x, coordinate(map.exit.x, map.exit.y).y, 32, 32);
+    context.drawImage(tileImage, 5* 32, 0, 32, 32, coordinate(map.b.x, map.b.y).x, coordinate(map.b.x, map.b.y).y, 32, 32);
+    for (let i = 0; i < map.e.length; i++)
+      context.drawImage(tileImage, 4 * 32, 0, 32, 32, coordinate(map.e[i].x, map.e[i].y).x, coordinate(map.e[i].x, map.e[i].y).y, 32, 32);
+    for (let i = 0; i < map.p.length; i++)
+      context.drawImage(tileImage, 3 * 32, 0, 32, 32, coordinate(map.p[i].x, map.p[i].y).x, coordinate(map.p[i].x, map.p[i].y).y, 32, 32);
+    context.drawImage(tileImage, 6* 32, 0, 32, 32, coordinate(map.t.x, map.t.y).x, coordinate(map.t.x, map.t.y).y, 32, 32);
   } else {
     context.font = "20px Arial";
     context.fillText("tap to restart", canvas.width / 2, canvas.height - 10);
