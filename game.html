@@ -149,9 +149,9 @@ let premadeMaps = [
 
 let mousedown = false;
 
-let closeCombatArchetype = {range:1, movement:4, maxhp:20, hp:20, attack:4, defense:2, speed:3};
-let distanceArchetype = {range:2, movement:3, maxhp:18, hp:18, attack:3, defense:3, speed:2};
-let supportArchetype = {range:2, movement:3, maxhp:15, hp:15, attack:1, defense:0, speed:1};
+let closeCombatArchetype = {range:1, movement:3, maxhp:20, hp:20, attack:4, defense:2, speed:3};
+let distanceArchetype = {range:2, movement:2, maxhp:18, hp:18, attack:3, defense:3, speed:2};
+let supportArchetype = {range:2, movement:2, maxhp:15, hp:15, attack:1, defense:0, speed:1};
 
 let archetypes = [closeCombatArchetype, distanceArchetype, supportArchetype];
 
@@ -164,7 +164,8 @@ function statsRange(ref)
 }
 
 class Unit {
-  constructor(type) {
+  constructor(type, binding) {
+    this.type = type;
     this.range = archetypes[type].range;
     this.movement = archetypes[type].movement;
     this.maxhp = statsRange(archetypes[type].maxhp);
@@ -174,43 +175,91 @@ class Unit {
     this.speed = statsRange(archetypes[type].speed);
     this.exp = 0;
     this.ability = [];
-    this.x = 0;
-    this.y = 0;
+    this.binding = binding;
   }
 }
 
 let playerUnits = [];
+for (let i = 0; i < 3; i++)
+  playerUnits.push(new Unit(Math.floor(Math.random() * 3), i));
 let enemyUnits = [];
-
-function generateEnemies() {
-  enemyUnits = [];
-  let nbUnit = Math.floor(Math.random() * 2) + 3;
-  for (let i = 0; i < nbUnit; i++) {
-    let type = Math.floor(Math.random() * 3);
-    walls.push(new Unit(type));
-  }
-}
-
-let boss = closeCombatArchetype;
-let thief = closeCombatArchetype;
+let boss;
+let thief;
 
 let grid = [];
 for (let i = 0; i < 15; i++)
   for (let j = 0; j < 10; j++)
-    grid.push({x:j * 32, y:i * 32});
+    grid.push({x:j * 32, y:i * 32, danger:false});
 let map;
 
 let tileImage = new Image();
 tileImage.src = "tileset.png";
-let tileNumber = 3;
 
 function coordinate(x, y) {
-  return grid[y * 10 + x];
+  return y * 10 + x;
+}
+
+function enemyReach(enemy, utype) {
+  let id = coordinate(map.e[enemy.binding].x, map.e[enemy.binding].y);
+  if (utype == 1)
+    id = coordinate(map.b.x, map.b.y);
+  else if (utype == 2)
+    id = coordinate(map.t.x, map.t.y);
+  let gap = -1;
+  for (let i = id - ((enemy.movement + enemy.range) * 10); i < id; i += 10) {
+    gap++;
+    if (i < 0 || i > 149)
+      continue;
+    for (let j = i - gap; j < i + gap + 1; j++) {
+      if (j < 0 || Math.floor(j / 10) != Math.floor(i / 10))
+        continue;
+      grid[j].danger = true;
+    }
+  }
+  gap++;
+  for (let j = id - gap; j < id + gap + 1; j++) {
+    if (j < 0 || Math.floor(j / 10) != Math.floor(id / 10))
+      continue;
+    grid[j].danger = true;
+  }
+  gap = -1;
+  for (let i = id + ((enemy.movement + enemy.range) * 10); i > id; i -= 10) {
+    gap++;
+    if (i < 0 || i > 149)
+      continue;
+    for (let j = i - gap; j < i + gap + 1; j++) {
+      if (j < 0 || Math.floor(j / 10) != Math.floor(i / 10))
+        continue;
+      grid[j].danger = true;
+    }
+  }
+}
+
+function dangerZone() {
+  for (let i = 0; i < grid.length; i++)
+    grid[i].danger = false;
+  enemyUnits.forEach(function(enemy) {
+    enemyReach(enemy, 0)
+  });
+  enemyReach(boss, 1);
+  enemyReach(thief, 2);
 }
 
 function generateNewMap() {
   let select = Math.floor(Math.random() * premadeMaps.length);
   map = premadeMaps[select];
+  enemyUnits = [];
+  for (let i = 0; i < map.e.length; i++)
+    enemyUnits.push(new Unit(Math.floor(Math.random() * 3), i));
+  thief = new Unit(0, 0);
+  boss = new Unit(Math.floor(Math.random() * 2), 0);
+  boss.attack += 2;
+  boss.defense += 2;
+  boss.maxhp += 2;
+  boss.hp += 2;
+  boss.movement = 0;
+  boss.speed += 2;
+  dangerZone();
 }
 
 let end = false;
@@ -218,23 +267,33 @@ let menu = false;
 
 generateNewMap();
 
+
 function loop() {
   requestAnimationFrame(loop);
   context.clearRect(0,0,canvas.width,canvas.height);
   if (menu) {
     context.fillText("tap to start", canvas.width / 2, canvas.height - 10);
   } else if (!end) {
-    for (let i = 0; i < grid.length; i++)
+    for (let i = 0; i < grid.length; i++) {
       context.drawImage(tileImage, 0, 0, 32, 32, grid[i].x, grid[i].y, 32, 32);
+      if (grid[i].danger)
+        context.drawImage(tileImage, 7 * 32, 0, 32, 32, grid[i].x, grid[i].y, 32, 32);
+    }
     for (let i = 0; i < map.w.length; i++)
-      context.drawImage(tileImage, 2 * 32, 0, 32, 32, coordinate(map.w[i].x, map.w[i].y).x, coordinate(map.w[i].x, map.w[i].y).y, 32, 32);
-    context.drawImage(tileImage, 32, 0, 32, 32, coordinate(map.exit.x, map.exit.y).x, coordinate(map.exit.x, map.exit.y).y, 32, 32);
-    context.drawImage(tileImage, 5* 32, 0, 32, 32, coordinate(map.b.x, map.b.y).x, coordinate(map.b.x, map.b.y).y, 32, 32);
+      context.drawImage(tileImage, 2 * 32, 0, 32, 32, grid[coordinate(map.w[i].x, map.w[i].y)].x, grid[coordinate(map.w[i].x, map.w[i].y)].y, 32, 32);
+    context.drawImage(tileImage, 32, 0, 32, 32, grid[coordinate(map.exit.x, map.exit.y)].x, grid[coordinate(map.exit.x, map.exit.y)].y, 32, 32);
+    context.drawImage(tileImage, 5* 32, 0, 32, 32, grid[coordinate(map.b.x, map.b.y)].x, grid[coordinate(map.b.x, map.b.y)].y, 32, 32);
     for (let i = 0; i < map.e.length; i++)
-      context.drawImage(tileImage, 4 * 32, 0, 32, 32, coordinate(map.e[i].x, map.e[i].y).x, coordinate(map.e[i].x, map.e[i].y).y, 32, 32);
+      context.drawImage(tileImage, 4 * 32, 0, 32, 32, grid[coordinate(map.e[i].x, map.e[i].y)].x, grid[coordinate(map.e[i].x, map.e[i].y)].y, 32, 32);
     for (let i = 0; i < map.p.length; i++)
-      context.drawImage(tileImage, 3 * 32, 0, 32, 32, coordinate(map.p[i].x, map.p[i].y).x, coordinate(map.p[i].x, map.p[i].y).y, 32, 32);
-    context.drawImage(tileImage, 6* 32, 0, 32, 32, coordinate(map.t.x, map.t.y).x, coordinate(map.t.x, map.t.y).y, 32, 32);
+      context.drawImage(tileImage, 3 * 32, 0, 32, 32, grid[coordinate(map.p[i].x, map.p[i].y)].x, grid[coordinate(map.p[i].x, map.p[i].y)].y, 32, 32);
+    context.drawImage(tileImage, 6* 32, 0, 32, 32, grid[coordinate(map.t.x, map.t.y)].x, grid[coordinate(map.t.x, map.t.y)].y, 32, 32);
+
+    for (let i = 0; i < playerUnits.length; i++)
+      context.drawImage(tileImage, (11 + playerUnits[i].type) * 32, 0, 32, 32, grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].x, grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].y, 32, 32);
+    for (let i = 0; i < enemyUnits.length; i++)
+      context.drawImage(tileImage, (11 + enemyUnits[i].type) * 32, 0, 32, 32, grid[coordinate(map.e[enemyUnits[i].binding].x, map.e[enemyUnits[i].binding].y)].x, grid[coordinate(map.e[enemyUnits[i].binding].x, map.e[enemyUnits[i].binding].y)].y, 32, 32);
+    context.drawImage(tileImage, (11 + boss.type) * 32, 0, 32, 32, grid[coordinate(map.b.x, map.b.y)].x, grid[coordinate(map.b.x, map.b.y)].y, 32, 32);
   } else {
     context.font = "20px Arial";
     context.fillText("tap to restart", canvas.width / 2, canvas.height - 10);
