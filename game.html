@@ -188,7 +188,7 @@ let thief;
 let grid = [];
 for (let i = 0; i < 15; i++)
   for (let j = 0; j < 10; j++)
-    grid.push({x:j * 32, y:i * 32, danger:false});
+    grid.push({x:j * 32, y:i * 32, danger:false, highlight:0});
 let map;
 
 let tileImage = new Image();
@@ -256,6 +256,39 @@ function floodFill(start, m, r) {
 
 
 
+let selected = -1;
+
+function dfsp(x, y, start, m, r) {
+  if (tooFar(x, y, start, m) || isWall(x, y) || alreadyUsed(x, y))
+    return;
+  used.push({x:x, y:y});
+  grid[y * 10 + x].highlight = 1;
+
+  if (x - r >= 0 && !isWall(x - r, y) && grid[y * 10 + (x - r)].highlight != 1)
+    grid[y * 10 + (x - r)].highlight = 2;
+  if (y + r < 15 && !isWall(x, y + r) && grid[(y + r) * 10 + x].highlight != 1)
+    grid[(y + r) * 10 + x].highlight = 2;
+  if (x + r < 10 && !isWall(x + r, y) && grid[y * 10 + (x + r)].highlight != 1)
+    grid[y * 10 + (x + r)].highlight = 2;
+  if (y - r >= 0 && !isWall(x, y - r) && grid[(y - r) * 10 + x].highlight != 1)
+    grid[(y - r) * 10 + x].highlight = 2;
+
+  if (x - 1 >= 0)
+    dfsp(x - 1, y, start, m, r);
+  if (y + 1 < 15)
+    dfsp(x, y + 1, start, m, r);
+  if (x + 1 < 10)
+    dfsp(x + 1, y, start, m, r);
+  if (y - 1 >= 0)
+    dfsp(x, y - 1, start, m, r);
+}
+
+function floodFillPlayer(start, m, r) {
+  used = [];
+  dfsp(start.x, start.y, start, m, r);
+}
+
+
 
 function dangerZone() {
   for (let i = 0; i < grid.length; i++)
@@ -300,6 +333,10 @@ function loop() {
       context.drawImage(tileImage, 0, 0, 32, 32, grid[i].x, grid[i].y, 32, 32);
       if (grid[i].danger)
         context.drawImage(tileImage, 7 * 32, 0, 32, 32, grid[i].x, grid[i].y, 32, 32);
+      if (grid[i].highlight == 1)
+        context.drawImage(tileImage, 8 * 32, 0, 32, 32, grid[i].x, grid[i].y, 32, 32);
+      if (grid[i].highlight == 2)
+        context.drawImage(tileImage, 9 * 32, 0, 32, 32, grid[i].x, grid[i].y, 32, 32);
     }
     for (let i = 0; i < map.w.length; i++)
       context.drawImage(tileImage, 2 * 32, 0, 32, 32, grid[coordinate(map.w[i].x, map.w[i].y)].x, grid[coordinate(map.w[i].x, map.w[i].y)].y, 32, 32);
@@ -322,26 +359,12 @@ function loop() {
   }
 }
 
-document.addEventListener('mouseup', function(e) {
-  let relativeX = e.x - canvas.offsetLeft;
-  let relativeY = e.y - canvas.offsetTop;
-
-  mousedown = false;
-  if (lastX > relativeX) {
-    velocityX = -(lastX - relativeX) / 30;
-    directionX = -1;
-  } else if (lastX != relativeX) {
-    velocityX = (relativeX - lastX) / 30;
-    directionX = 1;
-  }
-  if (lastY > relativeY) {
-    velocityY = -(lastY - relativeY) / 30;
-    directionY = -1;
-  } else if (lastY != relativeY) {
-    velocityY = (relativeY - lastY) / 30;
-    directionY = 1;
-  }
-});
+function findUnit(pos) {
+  for (let i = 0; i < playerUnits.length; i++)
+    if (map.p[playerUnits[i].binding].x == pos.x && map.p[playerUnits[i].binding].y == pos.y)
+      return i;
+  return -1;
+}
 
 document.addEventListener('click', function(e) {
   let relativeX = e.x - canvas.offsetLeft;
@@ -355,9 +378,15 @@ document.addEventListener('click', function(e) {
     menu = true;
     end = false;
   } else {
+    if (grid[Math.floor(relativeY / 32) * 10 + Math.floor(relativeX / 32)].highlight == 0 || findUnit({y:Math.floor(relativeY / 32), x:Math.floor(relativeX / 32)}) != -1)
+      for (let i = 0 ; i < grid.length; i++)
+        grid[i].highlight = 0;
     map.p.forEach(function(pos) {
-      if (relativeX >= pos.x * 32 && relativeX < (pos.x + 1) * 32 && relativeY >= pos.y * 32 && relativeY < (pos.y + 1) * 32)
-        document.write(pos.x + ", " + pos.y);
+      if (relativeX >= pos.x * 32 && relativeX < (pos.x + 1) * 32 && relativeY >= pos.y * 32 && relativeY < (pos.y + 1) * 32) {
+        selected = findUnit(pos);
+        if (selected != -1)
+          floodFillPlayer(pos, playerUnits[selected].movement, playerUnits[selected].range);
+      }
     });
   }
 });
