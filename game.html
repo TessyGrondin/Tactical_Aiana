@@ -147,7 +147,6 @@ let premadeMaps = [
 
 
 
-let mousedown = false;
 
 let closeCombatArchetype = {range:1, movement:3, maxhp:20, hp:20, attack:4, defense:2, speed:3};
 let distanceArchetype = {range:2, movement:2, maxhp:18, hp:18, attack:3, defense:3, speed:2};
@@ -344,7 +343,7 @@ document.addEventListener('mouseup', function(e) {
   }
 });
 
-document.addEventListener('mousedown', function(e) {
+document.addEventListener('click', function(e) {
   let relativeX = e.x - canvas.offsetLeft;
   let relativeY = e.y - canvas.offsetTop;
 
@@ -356,8 +355,11 @@ document.addEventListener('mousedown', function(e) {
     menu = true;
     end = false;
   } else {
+    map.p.forEach(function(pos) {
+      if (relativeX >= pos.x * 32 && relativeX < (pos.x + 1) * 32 && relativeY >= pos.y * 32 && relativeY < (pos.y + 1) * 32)
+        document.write(pos.x + ", " + pos.y);
+    });
   }
-  mousedown = true;
 });
 
 requestAnimationFrame(loop);
