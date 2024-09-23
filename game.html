@@ -199,50 +199,73 @@ function coordinate(x, y) {
   return y * 10 + x;
 }
 
-function enemyReach(enemy, utype) {
-  let id = coordinate(map.e[enemy.binding].x, map.e[enemy.binding].y);
-  if (utype == 1)
-    id = coordinate(map.b.x, map.b.y);
-  else if (utype == 2)
-    id = coordinate(map.t.x, map.t.y);
-  let gap = -1;
-  for (let i = id - ((enemy.movement + enemy.range) * 10); i < id; i += 10) {
-    gap++;
-    if (i < 0 || i > 149)
-      continue;
-    for (let j = i - gap; j < i + gap + 1; j++) {
-      if (j < 0 || Math.floor(j / 10) != Math.floor(i / 10))
-        continue;
-      grid[j].danger = true;
-    }
-  }
-  gap++;
-  for (let j = id - gap; j < id + gap + 1; j++) {
-    if (j < 0 || Math.floor(j / 10) != Math.floor(id / 10))
-      continue;
-    grid[j].danger = true;
-  }
-  gap = -1;
-  for (let i = id + ((enemy.movement + enemy.range) * 10); i > id; i -= 10) {
-    gap++;
-    if (i < 0 || i > 149)
-      continue;
-    for (let j = i - gap; j < i + gap + 1; j++) {
-      if (j < 0 || Math.floor(j / 10) != Math.floor(i / 10))
-        continue;
-      grid[j].danger = true;
-    }
-  }
+
+
+
+let used = [];
+
+function tooFar(x, y, start, m) {
+  let dist = Math.abs(x - start.x) + Math.abs(y - start.y);
+  if (dist > m)
+    return true;
+  return false;
 }
+
+function isWall(x, y) {
+  for (let i = 0; i < map.w.length; i++)
+    if (map.w[i].x == x && map.w[i].y == y)
+      return true;
+  return false;
+}
+
+function alreadyUsed(x, y) {
+  for (let i = 0; i < used.length; i++)
+    if (used[i].x == x && used[i].y == y)
+      return true;
+  return false;
+}
+
+function dfs(x, y, start, m, r) {
+  if (tooFar(x, y, start, m) || isWall(x, y) || alreadyUsed(x, y))
+    return;
+  used.push({x:x, y:y});
+  grid[y * 10 + x].danger = true;
+
+  if (x - r >= 0 && !isWall(x - r, y))
+    grid[y * 10 + (x - r)].danger = true;
+  if (y + r < 15 && !isWall(x, y + r))
+    grid[(y + r) * 10 + x].danger = true;
+  if (x + r < 10 && !isWall(x + r, y))
+    grid[y * 10 + (x + r)].danger = true;
+  if (y - r >= 0 && !isWall(x, y - r))
+    grid[(y - r) * 10 + x].danger = true;
+
+  if (x - 1 >= 0)
+    dfs(x - 1, y, start, m, r);
+  if (y + 1 < 15)
+    dfs(x, y + 1, start, m, r);
+  if (x + 1 < 10)
+    dfs(x + 1, y, start, m, r);
+  if (y - 1 >= 0)
+    dfs(x, y - 1, start, m, r);
+}
+
+function floodFill(start, m, r) {
+  used = [];
+  dfs(start.x, start.y, start, m, r);
+}
+
+
+
 
 function dangerZone() {
   for (let i = 0; i < grid.length; i++)
     grid[i].danger = false;
   enemyUnits.forEach(function(enemy) {
-    enemyReach(enemy, 0)
+    floodFill(map.e[enemy.binding], enemy.movement, enemy.range);
   });
-  enemyReach(boss, 1);
-  enemyReach(thief, 2);
+  floodFill(map.b, boss.movement, boss.range);
+  floodFill(map.t, thief.movement, thief.range);
 }
 
 function generateNewMap() {
