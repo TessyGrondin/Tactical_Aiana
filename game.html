@@ -246,10 +246,12 @@ function fillNodeD(start, movex, movey, r) {
   }
   let stepy = (movey < 0) ? -1 : 1;
   let stepx = (movex < 0) ? -1 : 1;
-  if (movey != 0 && validCoordinates(start.x, start.y + stepy) && !isWall(start.x, start.y + stepy))
+  if (Math.abs(movey) > Math.abs(movex) && movey != 0 && validCoordinates(start.x, start.y + stepy) && !isWall(start.x, start.y + stepy))
     fillNodeD({x:start.x, y:start.y + stepy}, movex, movey - stepy, r);
-  else if (movex != 0)
+  else if (movex != 0 && !isWall(start.x + stepx, start.y))
     fillNodeD({x:start.x + stepx, y:start.y}, movex - stepx, movey, r);
+  else if (movey != 0 && !isWall(start.x, start.y + stepy))
+    fillNodeD({x:start.x, y:start.y + stepy}, movex, movey - stepy, r);
 }
 
 function fillDanger(start, m, r) {
@@ -293,25 +295,25 @@ function fillNodeP(start, movex, movey, r) {
   if (movey == 0 && movex == 0) {
     grid[start.y * 10 + start.x].highlight = 1;
 
-    // if (start.x - r >= 0 && !isWall(start.x - r, start.y && grid[start.y * 10 + (start.x - r)].highlight != 1))
-    //   grid[start.y * 10 + (start.x - r)].highlight = 2;
-    // if (start.y + r < 15 && !isWall(start.x, start.y + r && grid[(start.y + r) * 10 + start.x].highlight != 1))
-    //   grid[(start.y + r) * 10 + start.x].highlight = 2;
-    // if (start.x + r < 10 && !isWall(start.x + r, start.y && grid[start.y * 10 + (start.x + r)].highlight != 1))
-    //   grid[start.y * 10 + (start.x + r)].highlight = 2;
-    // if (start.y - r >= 0 && !isWall(start.x, start.y - r && grid[(start.y - r) * 10 + start.x].highlight != 1))
-    //   grid[(start.y - r) * 10 + start.x].highlight = 2;
+    if (start.x - r >= 0 && !isWall(start.x - r, start.y) && grid[start.y * 10 + (start.x - r)].highlight != 1)
+      grid[start.y * 10 + (start.x - r)].highlight = 2;
+    if (start.y + r < 15 && !isWall(start.x, start.y + r) && grid[(start.y + r) * 10 + start.x].highlight != 1)
+      grid[(start.y + r) * 10 + start.x].highlight = 2;
+    if (start.x + r < 10 && !isWall(start.x + r, start.y) && grid[start.y * 10 + (start.x + r)].highlight != 1)
+      grid[start.y * 10 + (start.x + r)].highlight = 2;
+    if (start.y - r >= 0 && !isWall(start.x, start.y - r) && grid[(start.y - r) * 10 + start.x].highlight != 1)
+      grid[(start.y - r) * 10 + start.x].highlight = 2;
 
-    // if (r == 2) {
-    //   if (start.x - 1 >= 0 && start.y + 1 < 15 && !isWall(start.x - 1, start.y + 1 && grid[(start.y + 1) * 10 + (start.x - 1)].highlight != 1))
-    //     grid[(start.y + 1) * 10 + (start.x - 1)].highlight = 2;
-    //   if (start.x - 1 >= 0 && start.y - 1 >= 0 && !isWall(start.x - 1, start.y - 1 && grid[(start.y - 1) * 10 + (start.x - 1)].highlight != 1))
-    //     grid[(start.y - 1) * 10 + (start.x - 1)].highlight = 2;
-    //   if (start.x + 1 < 10 && start.y + 1 < 15 && !isWall(start.x + 1, start.y + 1 && grid[(start.y + 1) * 10 + (start.x + 1)].highlight != 1))
-    //     grid[(start.y + 1) * 10 + (start.x + 1)].highlight = 2;
-    //   if (start.x + 1 < 10 && start.y - 1 >= 0 && !isWall(start.x + 1, start.y - 1 && grid[(start.y - 1) * 10 + (start.x + 1)].highlight != 1))
-    //     grid[(start.y - 1) * 10 + (start.x + 1)].highlight = 2;
-    // }
+    if (r == 2) {
+      if (start.x - 1 >= 0 && start.y + 1 < 15 && !isWall(start.x - 1, start.y + 1) && grid[(start.y + 1) * 10 + (start.x - 1)].highlight != 1)
+        grid[(start.y + 1) * 10 + (start.x - 1)].highlight = 2;
+      if (start.x - 1 >= 0 && start.y - 1 >= 0 && !isWall(start.x - 1, start.y - 1) && grid[(start.y - 1) * 10 + (start.x - 1)].highlight != 1)
+        grid[(start.y - 1) * 10 + (start.x - 1)].highlight = 2;
+      if (start.x + 1 < 10 && start.y + 1 < 15 && !isWall(start.x + 1, start.y + 1) && grid[(start.y + 1) * 10 + (start.x + 1)].highlight != 1)
+        grid[(start.y + 1) * 10 + (start.x + 1)].highlight = 2;
+      if (start.x + 1 < 10 && start.y - 1 >= 0 && !isWall(start.x + 1, start.y - 1) && grid[(start.y - 1) * 10 + (start.x + 1)].highlight != 1)
+        grid[(start.y - 1) * 10 + (start.x + 1)].highlight = 2;
+    }
     return;
   }
   let stepy = (movey < 0) ? -1 : 1;
@@ -380,7 +382,7 @@ function generateNewMap() {
   boss.hp += 2;
   boss.movement = 0;
   boss.speed += 2;
-  // dangerZone();
+  dangerZone();
 }
 
 let end = false;
