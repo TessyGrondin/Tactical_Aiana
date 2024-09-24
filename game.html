@@ -320,7 +320,7 @@ function fillNodeP(start, movex, movey, r) {
     fillNodeP({x:start.x, y:start.y + stepy}, movex, movey - stepy, r);
   else if (movex != 0 && !isWall(start.x + stepx, start.y))
     fillNodeP({x:start.x + stepx, y:start.y}, movex - stepx, movey, r);
-  else if (!isWall(start.x, start.y + stepy))
+  else if (movey != 0 && !isWall(start.x, start.y + stepy))
     fillNodeP({x:start.x, y:start.y + stepy}, movex, movey - stepy, r);
 }
 
