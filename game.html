@@ -198,7 +198,7 @@ function coordinate(x, y) {
   return y * 10 + x;
 }
 
-
+let lastPosition = {x:0, y:0};
 
 
 
@@ -446,9 +446,14 @@ document.addEventListener('click', function(e) {
     menu = true;
     end = false;
   } else {
-    if (grid[Math.floor(relativeY / 32) * 10 + Math.floor(relativeX / 32)].highlight == 0 || findUnit({y:Math.floor(relativeY / 32), x:Math.floor(relativeX / 32)}) != -1)
+    if (grid[Math.floor(relativeY / 32) * 10 + Math.floor(relativeX / 32)].highlight == 0 || findUnit({y:Math.floor(relativeY / 32), x:Math.floor(relativeX / 32)}) != -1) {
       for (let i = 0 ; i < grid.length; i++)
         grid[i].highlight = 0;
+    } else if (grid[Math.floor(relativeY / 32) * 10 + Math.floor(relativeX / 32)].highlight == 1) {
+      map.p[playerUnits[selected].binding].x = Math.floor(relativeX / 32);
+      map.p[playerUnits[selected].binding].y = Math.floor(relativeY / 32);
+      return;
+    }
     map.p.forEach(function(pos) {
       if (relativeX >= pos.x * 32 && relativeX < (pos.x + 1) * 32 && relativeY >= pos.y * 32 && relativeY < (pos.y + 1) * 32) {
         selected = findUnit(pos);
