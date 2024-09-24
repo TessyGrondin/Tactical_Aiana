@@ -201,14 +201,6 @@ function coordinate(x, y) {
 
 
 
-let used = [];
-
-function tooFar(x, y, start, m) {
-  let dist = Math.abs(x - start.x) + Math.abs(y - start.y);
-  if (dist > m)
-    return true;
-  return false;
-}
 
 function isWall(x, y) {
   for (let i = 0; i < map.w.length; i++)
@@ -217,75 +209,149 @@ function isWall(x, y) {
   return false;
 }
 
-function alreadyUsed(x, y) {
-  for (let i = 0; i < used.length; i++)
-    if (used[i].x == x && used[i].y == y)
-      return true;
-  return false;
+function validCoordinates(x, y)
+{
+  if (x < 0 || x > 9 || y < 0 || y > 14)
+    return false;
+  return true;
 }
 
-function dfs(x, y, start, m, r) {
-  if (tooFar(x, y, start, m) || isWall(x, y) || alreadyUsed(x, y))
+function fillNodeD(start, movex, movey, r) {
+  if (!validCoordinates(start.x, start.y) || isWall(start.x, start.y))
     return;
-  used.push({x:x, y:y});
-  grid[y * 10 + x].danger = true;
 
-  if (x - r >= 0 && !isWall(x - r, y))
-    grid[y * 10 + (x - r)].danger = true;
-  if (y + r < 15 && !isWall(x, y + r))
-    grid[(y + r) * 10 + x].danger = true;
-  if (x + r < 10 && !isWall(x + r, y))
-    grid[y * 10 + (x + r)].danger = true;
-  if (y - r >= 0 && !isWall(x, y - r))
-    grid[(y - r) * 10 + x].danger = true;
+  if (movey == 0 && movex == 0) {
+    grid[start.y * 10 + start.x].danger = true;
 
-  if (x - 1 >= 0)
-    dfs(x - 1, y, start, m, r);
-  if (y + 1 < 15)
-    dfs(x, y + 1, start, m, r);
-  if (x + 1 < 10)
-    dfs(x + 1, y, start, m, r);
-  if (y - 1 >= 0)
-    dfs(x, y - 1, start, m, r);
+    if (start.x - r >= 0 && !isWall(start.x - r, start.y))
+      grid[start.y * 10 + (start.x - r)].danger = true;
+    if (start.y + r < 15 && !isWall(start.x, start.y + r))
+      grid[(start.y + r) * 10 + start.x].danger = true;
+    if (start.x + r < 10 && !isWall(start.x + r, start.y))
+      grid[start.y * 10 + (start.x + r)].danger = true;
+    if (start.y - r >= 0 && !isWall(start.x, start.y - r))
+      grid[(start.y - r) * 10 + start.x].danger = true;
+
+    if (r == 2) {
+      if (start.x - 1 >= 0 && start.y + 1 < 15 && !isWall(start.x - 1, start.y + 1))
+        grid[(start.y + 1) * 10 + (start.x - 1)].danger = true;
+      if (start.x - 1 >= 0 && start.y - 1 >= 0 && !isWall(start.x - 1, start.y - 1))
+        grid[(start.y - 1) * 10 + (start.x - 1)].danger = true;
+      if (start.x + 1 < 10 && start.y + 1 < 15 && !isWall(start.x + 1, start.y + 1))
+        grid[(start.y + 1) * 10 + (start.x + 1)].danger = true;
+      if (start.x + 1 < 10 && start.y - 1 >= 0 && !isWall(start.x + 1, start.y - 1))
+        grid[(start.y - 1) * 10 + (start.x + 1)].danger = true;
+    }
+    return;
+  }
+  let stepy = (movey < 0) ? -1 : 1;
+  let stepx = (movex < 0) ? -1 : 1;
+  if (movey != 0 && validCoordinates(start.x, start.y + stepy) && !isWall(start.x, start.y + stepy))
+    fillNodeD({x:start.x, y:start.y + stepy}, movex, movey - stepy, r);
+  else if (movex != 0)
+    fillNodeD({x:start.x + stepx, y:start.y}, movex - stepx, movey, r);
 }
 
-function floodFill(start, m, r) {
-  used = [];
-  dfs(start.x, start.y, start, m, r);
+function fillDanger(start, m, r) {
+  grid[start.y * 10 + start.x].danger = true;
+  if (start.x - r >= 0 && !isWall(start.x - r, start.y))
+    grid[start.y * 10 + (start.x - r)].danger = true;
+  if (start.y + r < 15 && !isWall(start.x, start.y + r))
+    grid[(start.y + r) * 10 + start.x].danger = true;
+  if (start.x + r < 10 && !isWall(start.x + r, start.y))
+    grid[start.y * 10 + (start.x + r)].danger = true;
+  if (start.y - r >= 0 && !isWall(start.x, start.y - r))
+    grid[(start.y - r) * 10 + start.x].danger = true;
+
+  if (r == 2) {
+    if (start.x - 1 >= 0 && start.y + 1 < 15 && !isWall(start.x - 1, start.y + 1))
+      grid[(start.y + 1) * 10 + (start.x - 1)].danger = true;
+    if (start.x - 1 >= 0 && start.y - 1 >= 0 && !isWall(start.x - 1, start.y - 1))
+      grid[(start.y - 1) * 10 + (start.x - 1)].danger = true;
+    if (start.x + 1 < 10 && start.y + 1 < 15 && !isWall(start.x + 1, start.y + 1))
+      grid[(start.y + 1) * 10 + (start.x + 1)].danger = true;
+    if (start.x + 1 < 10 && start.y - 1 >= 0 && !isWall(start.x + 1, start.y - 1))
+      grid[(start.y - 1) * 10 + (start.x + 1)].danger = true;
+  }
+  for (let max = m; max > 0; max--) {
+    for (let i = -max; i < max + 1; i++) {
+      let j = max - Math.abs(i);
+      fillNodeD(start, j, i, r);
+      fillNodeD(start, -j, i, r);
+    }
+  }
 }
 
 
 
 let selected = -1;
 
-function dfsp(x, y, start, m, r) {
-  if (tooFar(x, y, start, m) || isWall(x, y) || alreadyUsed(x, y))
+function fillNodeP(start, movex, movey, r) {
+  if (!validCoordinates(start.x, start.y) || isWall(start.x, start.y))
     return;
-  used.push({x:x, y:y});
-  grid[y * 10 + x].highlight = 1;
 
-  if (x - r >= 0 && !isWall(x - r, y) && grid[y * 10 + (x - r)].highlight != 1)
-    grid[y * 10 + (x - r)].highlight = 2;
-  if (y + r < 15 && !isWall(x, y + r) && grid[(y + r) * 10 + x].highlight != 1)
-    grid[(y + r) * 10 + x].highlight = 2;
-  if (x + r < 10 && !isWall(x + r, y) && grid[y * 10 + (x + r)].highlight != 1)
-    grid[y * 10 + (x + r)].highlight = 2;
-  if (y - r >= 0 && !isWall(x, y - r) && grid[(y - r) * 10 + x].highlight != 1)
-    grid[(y - r) * 10 + x].highlight = 2;
+  if (movey == 0 && movex == 0) {
+    grid[start.y * 10 + start.x].highlight = 1;
 
-  if (x - 1 >= 0)
-    dfsp(x - 1, y, start, m, r);
-  if (y + 1 < 15)
-    dfsp(x, y + 1, start, m, r);
-  if (x + 1 < 10)
-    dfsp(x + 1, y, start, m, r);
-  if (y - 1 >= 0)
-    dfsp(x, y - 1, start, m, r);
+    // if (start.x - r >= 0 && !isWall(start.x - r, start.y && grid[start.y * 10 + (start.x - r)].highlight != 1))
+    //   grid[start.y * 10 + (start.x - r)].highlight = 2;
+    // if (start.y + r < 15 && !isWall(start.x, start.y + r && grid[(start.y + r) * 10 + start.x].highlight != 1))
+    //   grid[(start.y + r) * 10 + start.x].highlight = 2;
+    // if (start.x + r < 10 && !isWall(start.x + r, start.y && grid[start.y * 10 + (start.x + r)].highlight != 1))
+    //   grid[start.y * 10 + (start.x + r)].highlight = 2;
+    // if (start.y - r >= 0 && !isWall(start.x, start.y - r && grid[(start.y - r) * 10 + start.x].highlight != 1))
+    //   grid[(start.y - r) * 10 + start.x].highlight = 2;
+
+    // if (r == 2) {
+    //   if (start.x - 1 >= 0 && start.y + 1 < 15 && !isWall(start.x - 1, start.y + 1 && grid[(start.y + 1) * 10 + (start.x - 1)].highlight != 1))
+    //     grid[(start.y + 1) * 10 + (start.x - 1)].highlight = 2;
+    //   if (start.x - 1 >= 0 && start.y - 1 >= 0 && !isWall(start.x - 1, start.y - 1 && grid[(start.y - 1) * 10 + (start.x - 1)].highlight != 1))
+    //     grid[(start.y - 1) * 10 + (start.x - 1)].highlight = 2;
+    //   if (start.x + 1 < 10 && start.y + 1 < 15 && !isWall(start.x + 1, start.y + 1 && grid[(start.y + 1) * 10 + (start.x + 1)].highlight != 1))
+    //     grid[(start.y + 1) * 10 + (start.x + 1)].highlight = 2;
+    //   if (start.x + 1 < 10 && start.y - 1 >= 0 && !isWall(start.x + 1, start.y - 1 && grid[(start.y - 1) * 10 + (start.x + 1)].highlight != 1))
+    //     grid[(start.y - 1) * 10 + (start.x + 1)].highlight = 2;
+    // }
+    return;
+  }
+  let stepy = (movey < 0) ? -1 : 1;
+  let stepx = (movex < 0) ? -1 : 1;
+  if (Math.abs(movey) > Math.abs(movex) && movey != 0 && validCoordinates(start.x, start.y + stepy) && !isWall(start.x, start.y + stepy))
+    fillNodeP({x:start.x, y:start.y + stepy}, movex, movey - stepy, r);
+  else if (movex != 0 && !isWall(start.x + stepx, start.y))
+    fillNodeP({x:start.x + stepx, y:start.y}, movex - stepx, movey, r);
+  else if (!isWall(start.x, start.y + stepy))
+    fillNodeP({x:start.x, y:start.y + stepy}, movex, movey - stepy, r);
 }
 
-function floodFillPlayer(start, m, r) {
-  used = [];
-  dfsp(start.x, start.y, start, m, r);
+function fillPlayer(start, m, r) {
+  grid[start.y * 10 + start.x].highlight = 1;
+  if (start.x - r >= 0 && !isWall(start.x - r, start.y))
+    grid[start.y * 10 + (start.x - r)].highlight = 2;
+  if (start.y + r < 15 && !isWall(start.x, start.y + r))
+    grid[(start.y + r) * 10 + start.x].highlight = 2;
+  if (start.x + r < 10 && !isWall(start.x + r, start.y))
+    grid[start.y * 10 + (start.x + r)].highlight = 2;
+  if (start.y - r >= 0 && !isWall(start.x, start.y - r))
+    grid[(start.y - r) * 10 + start.x].highlight = 2;
+
+  if (r == 2) {
+    if (start.x - 1 >= 0 && start.y + 1 < 15 && !isWall(start.x - 1, start.y + 1))
+      grid[(start.y + 1) * 10 + (start.x - 1)].highlight = 2;
+    if (start.x - 1 >= 0 && start.y - 1 >= 0 && !isWall(start.x - 1, start.y - 1))
+      grid[(start.y - 1) * 10 + (start.x - 1)].highlight = 2;
+    if (start.x + 1 < 10 && start.y + 1 < 15 && !isWall(start.x + 1, start.y + 1))
+      grid[(start.y + 1) * 10 + (start.x + 1)].highlight = 2;
+    if (start.x + 1 < 10 && start.y - 1 >= 0 && !isWall(start.x + 1, start.y - 1))
+      grid[(start.y - 1) * 10 + (start.x + 1)].highlight = 2;
+  }
+  for (let max = m; max > 0; max--) {
+    for (let i = -max; i < max + 1; i++) {
+      let j = max - Math.abs(i);
+      fillNodeP(start, j, i, r);
+      fillNodeP(start, -j, i, r);
+    }
+  }
 }
 
 
@@ -294,10 +360,10 @@ function dangerZone() {
   for (let i = 0; i < grid.length; i++)
     grid[i].danger = false;
   enemyUnits.forEach(function(enemy) {
-    floodFill(map.e[enemy.binding], enemy.movement, enemy.range);
+    fillDanger(map.e[enemy.binding], enemy.movement, enemy.range);
   });
-  floodFill(map.b, boss.movement, boss.range);
-  floodFill(map.t, thief.movement, thief.range);
+  fillDanger(map.b, boss.movement, boss.range);
+  fillDanger(map.t, thief.movement, thief.range);
 }
 
 function generateNewMap() {
@@ -314,7 +380,7 @@ function generateNewMap() {
   boss.hp += 2;
   boss.movement = 0;
   boss.speed += 2;
-  dangerZone();
+  // dangerZone();
 }
 
 let end = false;
@@ -385,7 +451,7 @@ document.addEventListener('click', function(e) {
       if (relativeX >= pos.x * 32 && relativeX < (pos.x + 1) * 32 && relativeY >= pos.y * 32 && relativeY < (pos.y + 1) * 32) {
         selected = findUnit(pos);
         if (selected != -1)
-          floodFillPlayer(pos, playerUnits[selected].movement, playerUnits[selected].range);
+          fillPlayer(pos, playerUnits[selected].movement, playerUnits[selected].range);
       }
     });
   }
