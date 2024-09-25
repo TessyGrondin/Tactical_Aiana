@@ -206,7 +206,7 @@ let thief;
 let grid = [];
 for (let i = 0; i < 15; i++)
   for (let j = 0; j < 10; j++)
-    grid.push({x:j * 32, y:i * 32, danger:false, highlight:0});
+    grid.push({x:j * 32, y:i * 32, danger:[], highlight:0});
 let map;
 
 let tileImage = new Image();
@@ -282,31 +282,31 @@ let phase = 0;
 
 
 
-function fillNodeD(start, movex, movey, r) {
+function fillNodeD(start, movex, movey, r, id) {
   if (!validCoordinates(start.x, start.y) || isWall(start.x, start.y) || findUnit(start) != -1)
     return;
 
   if (movey == 0 && movex == 0) {
-    grid[start.y * 10 + start.x].danger = true;
+    grid[start.y * 10 + start.x].danger.push(id);
 
     if (start.x - r >= 0 && !isWall(start.x - r, start.y))
-      grid[start.y * 10 + (start.x - r)].danger = true;
+      grid[start.y * 10 + (start.x - r)].danger.push(id + 1);
     if (start.y + r < 15 && !isWall(start.x, start.y + r))
-      grid[(start.y + r) * 10 + start.x].danger = true;
+      grid[(start.y + r) * 10 + start.x].danger.push(id + 1);
     if (start.x + r < 10 && !isWall(start.x + r, start.y))
-      grid[start.y * 10 + (start.x + r)].danger = true;
+      grid[start.y * 10 + (start.x + r)].danger.push(id + 1);
     if (start.y - r >= 0 && !isWall(start.x, start.y - r))
-      grid[(start.y - r) * 10 + start.x].danger = true;
+      grid[(start.y - r) * 10 + start.x].danger.push(id + 1);
 
     if (r == 2) {
       if (start.x - 1 >= 0 && start.y + 1 < 15 && !isWall(start.x - 1, start.y + 1))
-        grid[(start.y + 1) * 10 + (start.x - 1)].danger = true;
+        grid[(start.y + 1) * 10 + (start.x - 1)].danger.push(id + 1);
       if (start.x - 1 >= 0 && start.y - 1 >= 0 && !isWall(start.x - 1, start.y - 1))
-        grid[(start.y - 1) * 10 + (start.x - 1)].danger = true;
+        grid[(start.y - 1) * 10 + (start.x - 1)].danger.push(id + 1);
       if (start.x + 1 < 10 && start.y + 1 < 15 && !isWall(start.x + 1, start.y + 1))
-        grid[(start.y + 1) * 10 + (start.x + 1)].danger = true;
+        grid[(start.y + 1) * 10 + (start.x + 1)].danger.push(id + 1);
       if (start.x + 1 < 10 && start.y - 1 >= 0 && !isWall(start.x + 1, start.y - 1))
-        grid[(start.y - 1) * 10 + (start.x + 1)].danger = true;
+        grid[(start.y - 1) * 10 + (start.x + 1)].danger.push(id + 1);
     }
     return;
   }
@@ -320,44 +320,46 @@ function fillNodeD(start, movex, movey, r) {
     fillNodeD({x:start.x, y:start.y + stepy}, movex, movey - stepy, r);
 }
 
-function fillDanger(start, m, r) {
-  grid[start.y * 10 + start.x].danger = true;
+function fillDanger(start, m, r, id) {
+  grid[start.y * 10 + start.x].danger.push(id);
   if (start.x - r >= 0 && !isWall(start.x - r, start.y))
-    grid[start.y * 10 + (start.x - r)].danger = true;
+    grid[start.y * 10 + (start.x - r)].danger.push(id + 1);
   if (start.y + r < 15 && !isWall(start.x, start.y + r))
-    grid[(start.y + r) * 10 + start.x].danger = true;
+    grid[(start.y + r) * 10 + start.x].danger.push(id + 1);
   if (start.x + r < 10 && !isWall(start.x + r, start.y))
-    grid[start.y * 10 + (start.x + r)].danger = true;
+    grid[start.y * 10 + (start.x + r)].danger.push(id + 1);
   if (start.y - r >= 0 && !isWall(start.x, start.y - r))
-    grid[(start.y - r) * 10 + start.x].danger = true;
+    grid[(start.y - r) * 10 + start.x].danger.push(id + 1);
 
   if (r == 2) {
     if (start.x - 1 >= 0 && start.y + 1 < 15 && !isWall(start.x - 1, start.y + 1))
-      grid[(start.y + 1) * 10 + (start.x - 1)].danger = true;
+      grid[(start.y + 1) * 10 + (start.x - 1)].danger.push(id + 1);
     if (start.x - 1 >= 0 && start.y - 1 >= 0 && !isWall(start.x - 1, start.y - 1))
-      grid[(start.y - 1) * 10 + (start.x - 1)].danger = true;
+      grid[(start.y - 1) * 10 + (start.x - 1)].danger.push(id + 1);
     if (start.x + 1 < 10 && start.y + 1 < 15 && !isWall(start.x + 1, start.y + 1))
-      grid[(start.y + 1) * 10 + (start.x + 1)].danger = true;
+      grid[(start.y + 1) * 10 + (start.x + 1)].danger.push(id + 1);
     if (start.x + 1 < 10 && start.y - 1 >= 0 && !isWall(start.x + 1, start.y - 1))
-      grid[(start.y - 1) * 10 + (start.x + 1)].danger = true;
+      grid[(start.y - 1) * 10 + (start.x + 1)].danger.push(id + 1);
   }
   for (let max = m; max > 0; max--) {
     for (let i = -max; i < max + 1; i++) {
       let j = max - Math.abs(i);
-      fillNodeD(start, j, i, r);
-      fillNodeD(start, -j, i, r);
+      fillNodeD(start, j, i, r, id);
+      fillNodeD(start, -j, i, r, id);
     }
   }
 }
 
 function dangerZone() {
   for (let i = 0; i < grid.length; i++)
-    grid[i].danger = false;
-  enemyUnits.forEach(function(enemy) {
-    fillDanger(map.e[enemy.binding], enemy.movement, enemy.range);
-  });
-  fillDanger(map.b, boss.movement, boss.range);
-  fillDanger(map.t, thief.movement, thief.range);
+    grid[i].danger = [];
+  for (let i = 0; i < map.e.length; i++)
+    fillDanger(map.e[enemyUnits[i].binding], enemyUnits[i].movement, enemyUnits[i].range, i * 2);
+  // enemyUnits.forEach(function(enemy) {
+  //   fillDanger(map.e[enemy.binding], enemy.movement, enemy.range);
+  // });
+  fillDanger(map.b, boss.movement, boss.range, -2);
+  fillDanger(map.t, thief.movement, thief.range, -4);
 }
 
 
@@ -467,6 +469,7 @@ function generateNewMap() {
   boss.hp += 2;
   boss.movement = 0;
   boss.speed += 2;
+  thief.range = 0;
   dangerZone();
 }
 
@@ -480,7 +483,7 @@ function loop() {
   } else if (!end) {
     for (let i = 0; i < grid.length; i++) {
       context.drawImage(tileImage, 0, 0, 32, 32, grid[i].x, grid[i].y, 32, 32);
-      if (grid[i].danger)
+      if (grid[i].danger.length > 0)
         context.drawImage(tileImage, 7 * 32, 0, 32, 32, grid[i].x, grid[i].y, 32, 32);
       if (grid[i].highlight == 1)
         context.drawImage(tileImage, 8 * 32, 0, 32, 32, grid[i].x, grid[i].y, 32, 32);
@@ -546,7 +549,6 @@ function loop() {
 
 
 function fight(unitA, unitB) {
-    // document.write(unitB.defense);
     let damageA = unitA.attack - unitB.defense;
     damageA = (damageA < 1) ? 1 : damageA;
     let damageB = unitB.attack - unitA.defense;
@@ -555,7 +557,9 @@ function fight(unitA, unitB) {
     unitB.hp -= damageA;
     if (unitB.hp <= 0)
         return;
-    if (unitA.range != unitB.range)
+    let rB = unitB.range;
+    rB = (rb == 0) ? 1 : rB;
+    if (unitA.range != rB)
       return;
     unitA.hp -= damageB;
     if (unitA.hp <= 0)
