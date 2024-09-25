@@ -355,9 +355,6 @@ function dangerZone() {
     grid[i].danger = [];
   for (let i = 0; i < map.e.length; i++)
     fillDanger(map.e[enemyUnits[i].binding], enemyUnits[i].movement, enemyUnits[i].range, i * 2);
-  // enemyUnits.forEach(function(enemy) {
-  //   fillDanger(map.e[enemy.binding], enemy.movement, enemy.range);
-  // });
   fillDanger(map.b, boss.movement, boss.range, -2);
   fillDanger(map.t, thief.movement, thief.range, -4);
 }
@@ -516,8 +513,8 @@ function loop() {
     }
     context.drawImage(tileImage, (11 + boss.type) * 32, 0, 32, 32, grid[coordinate(map.b.x, map.b.y)].x, grid[coordinate(map.b.x, map.b.y)].y, 32, 32);
     context.fillText(boss.hp + "/" + boss.maxhp, map.b.x * 32 + 16, map.b.y * 32 - 10);
-    context.fillStyle = "black";
-    context.fillText(selected, canvas.width / 2, 50);
+    // context.fillStyle = "black";
+    // context.fillText(selected, canvas.width / 2, 50);
 
 
 
@@ -645,12 +642,16 @@ document.addEventListener('click', function(e) {
         fight(playerUnits[selected], thief);
       playerUnits[selected].wait = true;
       selected = -1;
+      for (let i = 0 ; i < grid.length; i++)
+        grid[i].highlight = 0;
+      dangerZone();
       return;
 
     } else if (selected != -1 && grid[Math.floor(relativeY / 32) * 10 + Math.floor(relativeX / 32)].highlight == 1 && !playerUnits[selected].wait) {
       if (selected == unitOnClick) {
         playerUnits[selected].wait = true;
         selected = -1;
+        dangerZone();
         for (let i = 0 ; i < grid.length; i++)
           grid[i].highlight = 0;
         return;
