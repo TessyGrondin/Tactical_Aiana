@@ -496,15 +496,24 @@ function loop() {
     for (let i = 0; i < map.p.length; i++)
       context.drawImage(tileImage, 3 * 32, 0, 32, 32, grid[coordinate(map.p[i].x, map.p[i].y)].x, grid[coordinate(map.p[i].x, map.p[i].y)].y, 32, 32);
 
-    context.drawImage(tileImage, 6* 32, 0, 32, 32, grid[coordinate(map.t.x, map.t.y)].x, grid[coordinate(map.t.x, map.t.y)].y, 32, 32);
+    context.font = "20px Arial";
+    context.fillStyle = "blue";
     for (let i = 0; i < playerUnits.length; i++) {
       context.drawImage(tileImage, (11 + playerUnits[i].type) * 32, 0, 32, 32, grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].x, grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].y, 32, 32);
       if (playerUnits[i].wait)
         context.drawImage(tileImage, 10 * 32, 0, 32, 32, grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].x, grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].y, 32, 32);
+      context.fillText(playerUnits[i].hp + "/" + playerUnits[i].maxhp, map.p[i].x * 32 + 16, map.p[i].y * 32 - 10);
     }
-    for (let i = 0; i < enemyUnits.length; i++)
+    context.fillStyle = "red";
+    context.drawImage(tileImage, 6* 32, 0, 32, 32, grid[coordinate(map.t.x, map.t.y)].x, grid[coordinate(map.t.x, map.t.y)].y, 32, 32);
+    context.fillText(thief.hp + "/" + thief.maxhp, map.t.x * 32 + 16, map.t.y * 32 - 10);
+    for (let i = 0; i < enemyUnits.length; i++) {
       context.drawImage(tileImage, (11 + enemyUnits[i].type) * 32, 0, 32, 32, grid[coordinate(map.e[enemyUnits[i].binding].x, map.e[enemyUnits[i].binding].y)].x, grid[coordinate(map.e[enemyUnits[i].binding].x, map.e[enemyUnits[i].binding].y)].y, 32, 32);
+      context.fillText(enemyUnits[i].hp + "/" + enemyUnits[i].maxhp, map.e[i].x * 32 + 16, map.e[i].y * 32 - 10);
+    }
     context.drawImage(tileImage, (11 + boss.type) * 32, 0, 32, 32, grid[coordinate(map.b.x, map.b.y)].x, grid[coordinate(map.b.x, map.b.y)].y, 32, 32);
+    context.fillText(boss.hp + "/" + boss.maxhp, map.b.x * 32 + 16, map.b.y * 32 - 10);
+    context.fillStyle = "green";
     context.fillText(test, canvas.width / 2, 50);
 
 
@@ -536,6 +545,24 @@ function loop() {
 
 
 
+function fight(unitA, unitB) {
+    // document.write(unitB.defense);
+    let damageA = unitA.attack - unitB.defense;
+    damageA = (damageA < 1) ? 1 : damageA;
+    let damageB = unitB.attack - unitA.defense;
+    damageB = (damageB < 1) ? 1 : damageB;
+
+    unitB.hp -= damageA;
+    if (unitB.hp <= 0)
+        return;
+    if (unitA.range != unitB.range)
+      return;
+    unitA.hp -= damageB;
+    if (unitA.hp <= 0)
+        return;
+    if (unitA.speed > unitB.speed + 3)
+        unitB.hp -= damageA;
+}
 
 function startFight(pos, cx, cy, r, align) {
   let disty = Math.abs(pos.y - cy);
@@ -595,6 +622,7 @@ document.addEventListener('click', function(e) {
 
   } else if (phase == 0) {
     let unitOnClick = findUnit({y:Math.floor(relativeY / 32), x:Math.floor(relativeX / 32)});
+    let enemyOnClick = findEnemy({y:Math.floor(relativeY / 32), x:Math.floor(relativeX / 32)});
     if (grid[Math.floor(relativeY / 32) * 10 + Math.floor(relativeX / 32)].highlight == 0 || (unitOnClick != -1 && unitOnClick != selected)) {
       for (let i = 0 ; i < grid.length; i++)
         grid[i].highlight = 0;
@@ -605,6 +633,15 @@ document.addEventListener('click', function(e) {
       }
     } else if (grid[Math.floor(relativeY / 32) * 10 + Math.floor(relativeX / 32)].highlight != 0 && startFight(map.p[playerUnits[selected].binding], Math.floor(relativeX / 32), Math.floor(relativeY / 32), playerUnits[selected].range, 0)) {
       test = 1;
+      if (enemyOnClick > -1)
+        fight(playerUnits[selected], enemyUnits[enemyOnClick]);
+      else if (enemyOnClick == -2)
+        fight(playerUnits[selected], boss);
+      else
+        fight(playerUnits[selected], thief);
+      playerUnits[selected].wait = true;
+      selected = -1;
+      return;
     } else if (grid[Math.floor(relativeY / 32) * 10 + Math.floor(relativeX / 32)].highlight == 1 && !playerUnits[selected].wait) {
       if (selected == unitOnClick) {
         playerUnits[selected].wait = true;
