@@ -454,6 +454,11 @@ document.addEventListener('click', function(e) {
     if (grid[Math.floor(relativeY / 32) * 10 + Math.floor(relativeX / 32)].highlight == 0 || (unitOnClick != -1 && unitOnClick != selected)) {
       for (let i = 0 ; i < grid.length; i++)
         grid[i].highlight = 0;
+      if (selected != -1) {
+        map.p[playerUnits[selected].binding].x = lastPosition.x;
+        map.p[playerUnits[selected].binding].y = lastPosition.y;
+        selected = -1;
+      }
     } else if (grid[Math.floor(relativeY / 32) * 10 + Math.floor(relativeX / 32)].highlight == 1 && !playerUnits[selected].wait) {
       if (selected == unitOnClick) {
         playerUnits[selected].wait = true;
@@ -469,8 +474,11 @@ document.addEventListener('click', function(e) {
     map.p.forEach(function(pos) {
       if (relativeX >= pos.x * 32 && relativeX < (pos.x + 1) * 32 && relativeY >= pos.y * 32 && relativeY < (pos.y + 1) * 32) {
         selected = findUnit(pos);
-        if (selected != -1)
+        if (selected != -1) {
+          lastPosition.x = pos.x;
+          lastPosition.y = pos.y;
           fillPlayer(pos, playerUnits[selected].movement, playerUnits[selected].range);
+        }
       }
     });
   }
