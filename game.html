@@ -148,6 +148,13 @@ let premadeMaps = [
 
 
 
+
+
+
+
+
+
+
 let closeCombatArchetype = {range:1, movement:3, maxhp:20, hp:20, attack:4, defense:2, speed:3};
 let distanceArchetype = {range:2, movement:2, maxhp:18, hp:18, attack:3, defense:3, speed:2};
 let supportArchetype = {range:2, movement:2, maxhp:15, hp:15, attack:1, defense:0, speed:1};
@@ -186,6 +193,16 @@ let enemyUnits = [];
 let boss;
 let thief;
 
+
+
+
+
+
+
+
+
+
+
 let grid = [];
 for (let i = 0; i < 15; i++)
   for (let j = 0; j < 10; j++)
@@ -199,9 +216,17 @@ function coordinate(x, y) {
   return y * 10 + x;
 }
 
+
+
+
+
+
+
+
+
+
+
 let lastPosition = {x:0, y:0};
-
-
 
 function isWall(x, y) {
   for (let i = 0; i < map.w.length; i++)
@@ -234,6 +259,27 @@ function findEnemy(pos) {
     return -3;
   return -1;
 }
+
+
+
+
+
+
+
+
+
+
+let phase = 0;
+//0:player, 1:enemies, 2:thief, 3:boss
+
+
+
+
+
+
+
+
+
 
 function fillNodeD(start, movex, movey, r) {
   if (!validCoordinates(start.x, start.y) || isWall(start.x, start.y) || findUnit(start) != -1)
@@ -302,6 +348,25 @@ function fillDanger(start, m, r) {
     }
   }
 }
+
+function dangerZone() {
+  for (let i = 0; i < grid.length; i++)
+    grid[i].danger = false;
+  enemyUnits.forEach(function(enemy) {
+    fillDanger(map.e[enemy.binding], enemy.movement, enemy.range);
+  });
+  fillDanger(map.b, boss.movement, boss.range);
+  fillDanger(map.t, thief.movement, thief.range);
+}
+
+
+
+
+
+
+
+
+
 
 
 let selected = -1;
@@ -374,15 +439,18 @@ function fillPlayer(start, m, r) {
   }
 }
 
-function dangerZone() {
-  for (let i = 0; i < grid.length; i++)
-    grid[i].danger = false;
-  enemyUnits.forEach(function(enemy) {
-    fillDanger(map.e[enemy.binding], enemy.movement, enemy.range);
-  });
-  fillDanger(map.b, boss.movement, boss.range);
-  fillDanger(map.t, thief.movement, thief.range);
-}
+
+
+
+
+
+
+
+
+
+
+let end = false;
+let menu = false;
 
 function generateNewMap() {
   let select = Math.floor(Math.random() * premadeMaps.length);
@@ -400,9 +468,6 @@ function generateNewMap() {
   boss.speed += 2;
   dangerZone();
 }
-
-let end = false;
-let menu = false;
 
 generateNewMap();
 
@@ -429,8 +494,8 @@ function loop() {
       context.drawImage(tileImage, 4 * 32, 0, 32, 32, grid[coordinate(map.e[i].x, map.e[i].y)].x, grid[coordinate(map.e[i].x, map.e[i].y)].y, 32, 32);
     for (let i = 0; i < map.p.length; i++)
       context.drawImage(tileImage, 3 * 32, 0, 32, 32, grid[coordinate(map.p[i].x, map.p[i].y)].x, grid[coordinate(map.p[i].x, map.p[i].y)].y, 32, 32);
-    context.drawImage(tileImage, 6* 32, 0, 32, 32, grid[coordinate(map.t.x, map.t.y)].x, grid[coordinate(map.t.x, map.t.y)].y, 32, 32);
 
+    context.drawImage(tileImage, 6* 32, 0, 32, 32, grid[coordinate(map.t.x, map.t.y)].x, grid[coordinate(map.t.x, map.t.y)].y, 32, 32);
     for (let i = 0; i < playerUnits.length; i++) {
       context.drawImage(tileImage, (11 + playerUnits[i].type) * 32, 0, 32, 32, grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].x, grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].y, 32, 32);
       if (playerUnits[i].wait)
@@ -439,11 +504,38 @@ function loop() {
     for (let i = 0; i < enemyUnits.length; i++)
       context.drawImage(tileImage, (11 + enemyUnits[i].type) * 32, 0, 32, 32, grid[coordinate(map.e[enemyUnits[i].binding].x, map.e[enemyUnits[i].binding].y)].x, grid[coordinate(map.e[enemyUnits[i].binding].x, map.e[enemyUnits[i].binding].y)].y, 32, 32);
     context.drawImage(tileImage, (11 + boss.type) * 32, 0, 32, 32, grid[coordinate(map.b.x, map.b.y)].x, grid[coordinate(map.b.x, map.b.y)].y, 32, 32);
+    // context.fillText(phase, canvas.width / 2, 50);
+
+
+
+
+
+
+
+
+    if (phase == 0) {
+      let count = 0;
+      for (let i = 0; i < playerUnits.length; i++)
+        if (playerUnits[i].wait)
+          count++;
+      if (count == playerUnits.length)
+        phase = 1;
+    }
   } else {
     context.font = "20px Arial";
     context.fillText("tap to restart", canvas.width / 2, canvas.height - 10);
   }
 }
+
+
+
+
+
+
+
+
+
+
 
 document.addEventListener('click', function(e) {
   let relativeX = e.x - canvas.offsetLeft;
@@ -453,10 +545,30 @@ document.addEventListener('click', function(e) {
     menu = false;
     return;
   }
+
+
+
+
+
+
+
+
+
+
   if (end) {
     menu = true;
     end = false;
-  } else {
+
+
+
+
+
+
+
+
+
+
+  } else if (phase == 0) {
     let unitOnClick = findUnit({y:Math.floor(relativeY / 32), x:Math.floor(relativeX / 32)});
     if (grid[Math.floor(relativeY / 32) * 10 + Math.floor(relativeX / 32)].highlight == 0 || (unitOnClick != -1 && unitOnClick != selected)) {
       for (let i = 0 ; i < grid.length; i++)
