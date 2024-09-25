@@ -217,8 +217,26 @@ function validCoordinates(x, y)
   return true;
 }
 
+function findUnit(pos) {
+  for (let i = 0; i < playerUnits.length; i++)
+    if (map.p[playerUnits[i].binding].x == pos.x && map.p[playerUnits[i].binding].y == pos.y)
+      return i;
+  return -1;
+}
+
+function findEnemy(pos) {
+  for (let i = 0; i < enemyUnits.length; i++)
+    if (map.e[enemyUnits[i].binding].x == pos.x && map.e[enemyUnits[i].binding].y == pos.y)
+      return i;
+  if (map.b.x == pos.x && map.b.y == pos.y)
+    return -2;
+  if (map.t.x == pos.x && map.t.y == pos.y)
+    return -3;
+  return -1;
+}
+
 function fillNodeD(start, movex, movey, r) {
-  if (!validCoordinates(start.x, start.y) || isWall(start.x, start.y))
+  if (!validCoordinates(start.x, start.y) || isWall(start.x, start.y) || findUnit(start) != -1)
     return;
 
   if (movey == 0 && movex == 0) {
@@ -247,11 +265,11 @@ function fillNodeD(start, movex, movey, r) {
   }
   let stepy = (movey < 0) ? -1 : 1;
   let stepx = (movex < 0) ? -1 : 1;
-  if (Math.abs(movey) > Math.abs(movex) && movey != 0 && validCoordinates(start.x, start.y + stepy) && !isWall(start.x, start.y + stepy))
+  if (Math.abs(movey) > Math.abs(movex) && movey != 0 && validCoordinates(start.x, start.y + stepy) && !isWall(start.x, start.y + stepy) && findUnit(start) == -1)
     fillNodeD({x:start.x, y:start.y + stepy}, movex, movey - stepy, r);
-  else if (movex != 0 && !isWall(start.x + stepx, start.y))
+  else if (movex != 0 && !isWall(start.x + stepx, start.y) && findUnit(start) == -1)
     fillNodeD({x:start.x + stepx, y:start.y}, movex - stepx, movey, r);
-  else if (movey != 0 && !isWall(start.x, start.y + stepy))
+  else if (movey != 0 && !isWall(start.x, start.y + stepy) && findUnit(start) == -1)
     fillNodeD({x:start.x, y:start.y + stepy}, movex, movey - stepy, r);
 }
 
@@ -286,11 +304,10 @@ function fillDanger(start, m, r) {
 }
 
 
-let oldSelect = -1;
 let selected = -1;
 
 function fillNodeP(start, movex, movey, r) {
-  if (!validCoordinates(start.x, start.y) || isWall(start.x, start.y))
+  if (!validCoordinates(start.x, start.y) || isWall(start.x, start.y) || findEnemy(start) != -1)
     return;
 
   if (movey == 0 && movex == 0) {
@@ -319,11 +336,11 @@ function fillNodeP(start, movex, movey, r) {
   }
   let stepy = (movey < 0) ? -1 : 1;
   let stepx = (movex < 0) ? -1 : 1;
-  if (Math.abs(movey) > Math.abs(movex) && movey != 0 && validCoordinates(start.x, start.y + stepy) && !isWall(start.x, start.y + stepy))
+  if (Math.abs(movey) > Math.abs(movex) && movey != 0 && validCoordinates(start.x, start.y + stepy) && !isWall(start.x, start.y + stepy) && findEnemy(start) == -1)
     fillNodeP({x:start.x, y:start.y + stepy}, movex, movey - stepy, r);
-  else if (movex != 0 && !isWall(start.x + stepx, start.y))
+  else if (movex != 0 && !isWall(start.x + stepx, start.y) && findEnemy(start) == -1)
     fillNodeP({x:start.x + stepx, y:start.y}, movex - stepx, movey, r);
-  else if (movey != 0 && !isWall(start.x, start.y + stepy))
+  else if (movey != 0 && !isWall(start.x, start.y + stepy) && findEnemy(start) == -1)
     fillNodeP({x:start.x, y:start.y + stepy}, movex, movey - stepy, r);
 }
 
@@ -357,8 +374,6 @@ function fillPlayer(start, m, r) {
   }
 }
 
-
-
 function dangerZone() {
   for (let i = 0; i < grid.length; i++)
     grid[i].danger = false;
@@ -390,7 +405,6 @@ let end = false;
 let menu = false;
 
 generateNewMap();
-
 
 function loop() {
   requestAnimationFrame(loop);
@@ -429,13 +443,6 @@ function loop() {
     context.font = "20px Arial";
     context.fillText("tap to restart", canvas.width / 2, canvas.height - 10);
   }
-}
-
-function findUnit(pos) {
-  for (let i = 0; i < playerUnits.length; i++)
-    if (map.p[playerUnits[i].binding].x == pos.x && map.p[playerUnits[i].binding].y == pos.y)
-      return i;
-  return -1;
 }
 
 document.addEventListener('click', function(e) {
