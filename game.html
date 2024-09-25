@@ -516,8 +516,8 @@ function loop() {
     }
     context.drawImage(tileImage, (11 + boss.type) * 32, 0, 32, 32, grid[coordinate(map.b.x, map.b.y)].x, grid[coordinate(map.b.x, map.b.y)].y, 32, 32);
     context.fillText(boss.hp + "/" + boss.maxhp, map.b.x * 32 + 16, map.b.y * 32 - 10);
-    context.fillStyle = "green";
-    context.fillText(test, canvas.width / 2, 50);
+    context.fillStyle = "black";
+    context.fillText(selected, canvas.width / 2, 50);
 
 
 
@@ -549,23 +549,22 @@ function loop() {
 
 
 function fight(unitA, unitB) {
-    let damageA = unitA.attack - unitB.defense;
-    damageA = (damageA < 1) ? 1 : damageA;
-    let damageB = unitB.attack - unitA.defense;
-    damageB = (damageB < 1) ? 1 : damageB;
+  let damageA = unitA.attack - unitB.defense;
+  damageA = (damageA < 1) ? 1 : damageA;
+  let damageB = unitB.attack - unitA.defense;
+  damageB = (damageB < 1) ? 1 : damageB;
 
-    unitB.hp -= damageA;
-    if (unitB.hp <= 0)
-        return;
-    let rB = unitB.range;
-    rB = (rb == 0) ? 1 : rB;
-    if (unitA.range != rB)
-      return;
+  unitB.hp -= damageA;
+  if (unitB.hp <= 0)
+    return;
+  let rB = unitB.range;
+  rB = (rB == 0) ? 1 : rB;
+  if (unitA.range == rB)
     unitA.hp -= damageB;
-    if (unitA.hp <= 0)
-        return;
-    if (unitA.speed > unitB.speed + 3)
-        unitB.hp -= damageA;
+  if (unitA.hp <= 0)
+    return;
+  if (unitA.speed > unitB.speed + 3)
+    unitB.hp -= damageA;
 }
 
 function startFight(pos, cx, cy, r, align) {
@@ -627,6 +626,7 @@ document.addEventListener('click', function(e) {
   } else if (phase == 0) {
     let unitOnClick = findUnit({y:Math.floor(relativeY / 32), x:Math.floor(relativeX / 32)});
     let enemyOnClick = findEnemy({y:Math.floor(relativeY / 32), x:Math.floor(relativeX / 32)});
+
     if (grid[Math.floor(relativeY / 32) * 10 + Math.floor(relativeX / 32)].highlight == 0 || (unitOnClick != -1 && unitOnClick != selected)) {
       for (let i = 0 ; i < grid.length; i++)
         grid[i].highlight = 0;
@@ -635,8 +635,8 @@ document.addEventListener('click', function(e) {
         map.p[playerUnits[selected].binding].y = lastPosition.y;
         selected = -1;
       }
+
     } else if (grid[Math.floor(relativeY / 32) * 10 + Math.floor(relativeX / 32)].highlight != 0 && startFight(map.p[playerUnits[selected].binding], Math.floor(relativeX / 32), Math.floor(relativeY / 32), playerUnits[selected].range, 0)) {
-      test = 1;
       if (enemyOnClick > -1)
         fight(playerUnits[selected], enemyUnits[enemyOnClick]);
       else if (enemyOnClick == -2)
@@ -646,7 +646,8 @@ document.addEventListener('click', function(e) {
       playerUnits[selected].wait = true;
       selected = -1;
       return;
-    } else if (grid[Math.floor(relativeY / 32) * 10 + Math.floor(relativeX / 32)].highlight == 1 && !playerUnits[selected].wait) {
+
+    } else if (selected != -1 && grid[Math.floor(relativeY / 32) * 10 + Math.floor(relativeX / 32)].highlight == 1 && !playerUnits[selected].wait) {
       if (selected == unitOnClick) {
         playerUnits[selected].wait = true;
         selected = -1;
