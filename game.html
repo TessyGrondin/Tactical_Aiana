@@ -283,63 +283,63 @@ let phase = 0;
 
 
 function fillNodeD(start, movex, movey, r, id) {
-  if (!validCoordinates(start.x, start.y) || isWall(start.x, start.y) || findUnit(start) != -1)
+  if (!validCoordinates(start.x, start.y) || isWall(start.x, start.y) || findUnit(start) != -1 || findEnemy(start) != -1)
     return;
 
   if (movey == 0 && movex == 0) {
-    grid[start.y * 10 + start.x].danger.push(id);
+    grid[start.y * 10 + start.x].danger.push(id * 2);
 
     if (start.x - r >= 0 && !isWall(start.x - r, start.y))
-      grid[start.y * 10 + (start.x - r)].danger.push(id + 1);
+      grid[start.y * 10 + (start.x - r)].danger.push(id * 2 + 1);
     if (start.y + r < 15 && !isWall(start.x, start.y + r))
-      grid[(start.y + r) * 10 + start.x].danger.push(id + 1);
+      grid[(start.y + r) * 10 + start.x].danger.push(id * 2 + 1);
     if (start.x + r < 10 && !isWall(start.x + r, start.y))
-      grid[start.y * 10 + (start.x + r)].danger.push(id + 1);
+      grid[start.y * 10 + (start.x + r)].danger.push(id * 2 + 1);
     if (start.y - r >= 0 && !isWall(start.x, start.y - r))
-      grid[(start.y - r) * 10 + start.x].danger.push(id + 1);
+      grid[(start.y - r) * 10 + start.x].danger.push(id * 2 + 1);
 
     if (r == 2) {
       if (start.x - 1 >= 0 && start.y + 1 < 15 && !isWall(start.x - 1, start.y + 1))
-        grid[(start.y + 1) * 10 + (start.x - 1)].danger.push(id + 1);
+        grid[(start.y + 1) * 10 + (start.x - 1)].danger.push(id * 2 + 1);
       if (start.x - 1 >= 0 && start.y - 1 >= 0 && !isWall(start.x - 1, start.y - 1))
-        grid[(start.y - 1) * 10 + (start.x - 1)].danger.push(id + 1);
+        grid[(start.y - 1) * 10 + (start.x - 1)].danger.push(id * 2 + 1);
       if (start.x + 1 < 10 && start.y + 1 < 15 && !isWall(start.x + 1, start.y + 1))
-        grid[(start.y + 1) * 10 + (start.x + 1)].danger.push(id + 1);
+        grid[(start.y + 1) * 10 + (start.x + 1)].danger.push(id * 2 + 1);
       if (start.x + 1 < 10 && start.y - 1 >= 0 && !isWall(start.x + 1, start.y - 1))
-        grid[(start.y - 1) * 10 + (start.x + 1)].danger.push(id + 1);
+        grid[(start.y - 1) * 10 + (start.x + 1)].danger.push(id * 2 + 1);
     }
     return;
   }
   let stepy = (movey < 0) ? -1 : 1;
   let stepx = (movex < 0) ? -1 : 1;
   if (Math.abs(movey) > Math.abs(movex) && movey != 0 && validCoordinates(start.x, start.y + stepy) && !isWall(start.x, start.y + stepy) && findUnit(start) == -1)
-    fillNodeD({x:start.x, y:start.y + stepy}, movex, movey - stepy, r);
+    fillNodeD({x:start.x, y:start.y + stepy}, movex, movey - stepy, r, id);
   else if (movex != 0 && !isWall(start.x + stepx, start.y) && findUnit(start) == -1)
-    fillNodeD({x:start.x + stepx, y:start.y}, movex - stepx, movey, r);
+    fillNodeD({x:start.x + stepx, y:start.y}, movex - stepx, movey, r, id);
   else if (movey != 0 && !isWall(start.x, start.y + stepy) && findUnit(start) == -1)
-    fillNodeD({x:start.x, y:start.y + stepy}, movex, movey - stepy, r);
+    fillNodeD({x:start.x, y:start.y + stepy}, movex, movey - stepy, r, id);
 }
 
 function fillDanger(start, m, r, id) {
-  grid[start.y * 10 + start.x].danger.push(id);
+  grid[start.y * 10 + start.x].danger.push(id * 2);
   if (start.x - r >= 0 && !isWall(start.x - r, start.y))
-    grid[start.y * 10 + (start.x - r)].danger.push(id + 1);
+    grid[start.y * 10 + (start.x - r)].danger.push(id * 2 + 1);
   if (start.y + r < 15 && !isWall(start.x, start.y + r))
-    grid[(start.y + r) * 10 + start.x].danger.push(id + 1);
+    grid[(start.y + r) * 10 + start.x].danger.push(id * 2 + 1);
   if (start.x + r < 10 && !isWall(start.x + r, start.y))
-    grid[start.y * 10 + (start.x + r)].danger.push(id + 1);
+    grid[start.y * 10 + (start.x + r)].danger.push(id * 2 + 1);
   if (start.y - r >= 0 && !isWall(start.x, start.y - r))
-    grid[(start.y - r) * 10 + start.x].danger.push(id + 1);
+    grid[(start.y - r) * 10 + start.x].danger.push(id * 2 + 1);
 
   if (r == 2) {
     if (start.x - 1 >= 0 && start.y + 1 < 15 && !isWall(start.x - 1, start.y + 1))
-      grid[(start.y + 1) * 10 + (start.x - 1)].danger.push(id + 1);
+      grid[(start.y + 1) * 10 + (start.x - 1)].danger.push(id * 2 + 1);
     if (start.x - 1 >= 0 && start.y - 1 >= 0 && !isWall(start.x - 1, start.y - 1))
-      grid[(start.y - 1) * 10 + (start.x - 1)].danger.push(id + 1);
+      grid[(start.y - 1) * 10 + (start.x - 1)].danger.push(id * 2 + 1);
     if (start.x + 1 < 10 && start.y + 1 < 15 && !isWall(start.x + 1, start.y + 1))
-      grid[(start.y + 1) * 10 + (start.x + 1)].danger.push(id + 1);
+      grid[(start.y + 1) * 10 + (start.x + 1)].danger.push(id * 2 + 1);
     if (start.x + 1 < 10 && start.y - 1 >= 0 && !isWall(start.x + 1, start.y - 1))
-      grid[(start.y - 1) * 10 + (start.x + 1)].danger.push(id + 1);
+      grid[(start.y - 1) * 10 + (start.x + 1)].danger.push(id * 2 + 1);
   }
   for (let max = m; max > 0; max--) {
     for (let i = -max; i < max + 1; i++) {
@@ -354,7 +354,7 @@ function dangerZone() {
   for (let i = 0; i < grid.length; i++)
     grid[i].danger = [];
   for (let i = 0; i < map.e.length; i++)
-    fillDanger(map.e[enemyUnits[i].binding], enemyUnits[i].movement, enemyUnits[i].range, i * 2);
+    fillDanger(map.e[enemyUnits[i].binding], enemyUnits[i].movement, enemyUnits[i].range, enemyUnits[i].binding);
   fillDanger(map.b, boss.movement, boss.range, -2);
   fillDanger(map.t, thief.movement, thief.range, -4);
 }
@@ -446,6 +446,66 @@ function fillPlayer(start, m, r) {
 
 
 
+function getDistance(start, dest) {
+  let distx = Math.abs(start.x - dest.x);
+  let disty = Math.abs(start.y - dest.y);
+
+  return distx + disty;
+}
+
+function isPresent(pos, binding) {
+  if (!validCoordinates(pos.x, pos.y))
+    return false;
+  for (let i = 0; i < grid[pos.y * 10 + pos.x].danger.length; i++)
+    if (grid[pos.y * 10 + pos.x].danger[i] == binding * 2)
+      return true;
+  return false;
+}
+
+function goToSpot(unit, s, dest) {
+  if (isPresent(dest, unit.binding)) {
+    map.e[unit.binding].x = dest.x;
+    map.e[unit.binding].y = dest.y;
+    dangerZone();
+    return;
+  }
+  let dist = getDistance(s, dest);
+  let goal = {x:0, y:0};
+  for (let i = 0; i < unit.movement + 1; i++) {
+    let j = unit.movement - i;
+    if (isPresent({x:s.x + j, y:s.y + i}, unit.binding) && getDistance({x:s.x + j, y:s.y + i}, dest) < dist) {
+      goal.x = s.x + j;
+      goal.y = s.y + i;
+      dist = getDistance({x:s.x + j, y:s.y + i}, dest);
+    }
+    if (isPresent({x:s.x - j, y:s.y + i}, unit.binding) && getDistance({x:s.x - j, y:s.y + i}, dest) < dist) {
+      goal.x = s.x - j;
+      goal.y = s.y + i;
+      dist = getDistance({x:s.x - j, y:s.y + i}, dest);
+    }
+    if (isPresent({x:s.x + j, y:s.y - i}, unit.binding) && getDistance({x:s.x + j, y:s.y - i}, dest) < dist) {
+      goal.x = s.x + j;
+      goal.y = s.y - i;
+      dist = getDistance({x:s.x + j, y:s.y - i}, dest);
+    }
+    if (isPresent({x:s.x - j, y:s.y - i}, unit.binding) && getDistance({x:s.x - j, y:s.y - i}, dest) < dist) {
+      goal.x = s.x - j;
+      goal.y = s.y - i;
+      dist = getDistance({x:s.x - j, y:s.y - i}, dest);
+    }
+  }
+  map.e[unit.binding].x = goal.x;
+  map.e[unit.binding].y = goal.y;
+  dangerZone();
+}
+
+
+
+
+
+
+
+
 
 
 
@@ -514,7 +574,7 @@ function loop() {
     context.drawImage(tileImage, (11 + boss.type) * 32, 0, 32, 32, grid[coordinate(map.b.x, map.b.y)].x, grid[coordinate(map.b.x, map.b.y)].y, 32, 32);
     context.fillText(boss.hp + "/" + boss.maxhp, map.b.x * 32 + 16, map.b.y * 32 - 10);
     // context.fillStyle = "black";
-    // context.fillText(selected, canvas.width / 2, 50);
+    // context.fillText(phase, canvas.width / 2, 50);
 
 
 
@@ -530,6 +590,11 @@ function loop() {
           count++;
       if (count == playerUnits.length)
         phase = 1;
+    } else if (phase == 1) {
+      // for (let i = 0; i < enemyUnits.length; i++) {
+      //   goToSpot(enemyUnits[i], map.e[enemyUnits[i].binding], {x:0, y:0});
+      // }
+      phase = 2;
     }
   } else {
     context.font = "20px Arial";
