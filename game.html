@@ -483,22 +483,22 @@ function goToSpot(unit, s, dest) {
   let goal = {x:0, y:0};
   for (let i = 0; i < unit.movement + 1; i++) {
     let j = unit.movement - i;
-    if (isPresent({x:s.x + j, y:s.y + i}, unit.binding) && getDistance({x:s.x + j, y:s.y + i}, dest) < dist) {
+    if (findEnemy({x:s.x + j, y:s.y + i}) == -1 && isPresent({x:s.x + j, y:s.y + i}, unit.binding) && getDistance({x:s.x + j, y:s.y + i}, dest) < dist) {
       goal.x = s.x + j;
       goal.y = s.y + i;
       dist = getDistance({x:s.x + j, y:s.y + i}, dest);
     }
-    if (isPresent({x:s.x - j, y:s.y + i}, unit.binding) && getDistance({x:s.x - j, y:s.y + i}, dest) < dist) {
+    if (findEnemy({x:s.x + j, y:s.y + i}) == -1 && isPresent({x:s.x - j, y:s.y + i}, unit.binding) && getDistance({x:s.x - j, y:s.y + i}, dest) < dist) {
       goal.x = s.x - j;
       goal.y = s.y + i;
       dist = getDistance({x:s.x - j, y:s.y + i}, dest);
     }
-    if (isPresent({x:s.x + j, y:s.y - i}, unit.binding) && getDistance({x:s.x + j, y:s.y - i}, dest) < dist) {
+    if (findEnemy({x:s.x + j, y:s.y + i}) == -1 && isPresent({x:s.x + j, y:s.y - i}, unit.binding) && getDistance({x:s.x + j, y:s.y - i}, dest) < dist) {
       goal.x = s.x + j;
       goal.y = s.y - i;
       dist = getDistance({x:s.x + j, y:s.y - i}, dest);
     }
-    if (isPresent({x:s.x - j, y:s.y - i}, unit.binding) && getDistance({x:s.x - j, y:s.y - i}, dest) < dist) {
+    if (findEnemy({x:s.x + j, y:s.y + i}) == -1 && isPresent({x:s.x - j, y:s.y - i}, unit.binding) && getDistance({x:s.x - j, y:s.y - i}, dest) < dist) {
       goal.x = s.x - j;
       goal.y = s.y - i;
       dist = getDistance({x:s.x - j, y:s.y - i}, dest);
