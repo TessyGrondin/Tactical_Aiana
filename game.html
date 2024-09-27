@@ -556,7 +556,34 @@ function chooseTarget(unit) {
     if (ref != -1)
       break;
   }
-  return ref;
+  let s = map.p[playerUnits[ref].binding];
+  let dest = map.e[unit.binding];
+  let dist = getDistance(s, dest);
+  let goal = {x:0, y:0};
+  for (let i = 0; i < unit.range + 1; i++) {
+    let j = unit.range - i;
+    if (getDistance({x:s.x + j, y:s.y + i}, dest) < dist) {
+      goal.x = s.x + j;
+      goal.y = s.y + i;
+      dist = getDistance({x:s.x + j, y:s.y + i}, dest);
+    }
+    if (getDistance({x:s.x - j, y:s.y + i}, dest) < dist) {
+      goal.x = s.x - j;
+      goal.y = s.y + i;
+      dist = getDistance({x:s.x - j, y:s.y + i}, dest);
+    }
+    if (getDistance({x:s.x + j, y:s.y - i}, dest) < dist) {
+      goal.x = s.x + j;
+      goal.y = s.y - i;
+      dist = getDistance({x:s.x + j, y:s.y - i}, dest);
+    }
+    if (getDistance({x:s.x - j, y:s.y - i}, dest) < dist) {
+      goal.x = s.x - j;
+      goal.y = s.y - i;
+      dist = getDistance({x:s.x - j, y:s.y - i}, dest);
+    }
+  }
+  goToSpot(unit, map.e[unit.binding], goal);
 }
 
 
@@ -649,10 +676,8 @@ function loop() {
       if (count == playerUnits.length)
         phase = 1;
     } else if (phase == 1) {
-      // for (let i = 0; i < enemyUnits.length; i++) {
-      //   goToSpot(enemyUnits[i], map.e[enemyUnits[i].binding], {x:0, y:0});
-      // }
-      test = chooseTarget(enemyUnits[0]);
+      for (let i = 0; i < enemyUnits.length; i++)
+        chooseTarget(enemyUnits[i]);
       phase = 2;
     }
   } else {
