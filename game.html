@@ -454,6 +454,15 @@ function getDistance(start, dest) {
   return distx + disty;
 }
 
+function isHitable(pos, binding) {
+  if (!validCoordinates(pos.x, pos.y))
+    return false;
+  for (let i = 0; i < grid[pos.y * 10 + pos.x].danger.length; i++)
+    if (grid[pos.y * 10 + pos.x].danger[i] == binding * 2 + 1)
+      return true;
+  return false;
+}
+
 function isPresent(pos, binding) {
   if (!validCoordinates(pos.x, pos.y))
     return false;
@@ -584,6 +593,8 @@ function chooseTarget(unit) {
     }
   }
   goToSpot(unit, map.e[unit.binding], goal);
+  if (getDistance(s, dest) == unit.range)
+    fight(unit, playerUnits[ref]);
 }
 
 
@@ -678,7 +689,9 @@ function loop() {
     } else if (phase == 1) {
       for (let i = 0; i < enemyUnits.length; i++)
         chooseTarget(enemyUnits[i]);
-      phase = 2;
+      for (let i = 0; i < playerUnits.length; i++)
+        playerUnits[i].wait = false;
+      phase = 0;
     }
   } else {
     context.font = "20px Arial";
