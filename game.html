@@ -558,6 +558,50 @@ function compareData(t, pos) {
   return ref;
 }
 
+function goHealing(unit) {
+  let ref = 0;
+  let t = [];
+  for (let i = 0; i < enemyUnits.length; i++) {
+    if (enemyUnits[i].binding == unit.binding || enemyUnits[i].hp == enemyUnits[i].maxhp)
+      continue;
+    t.push(enemyUnits[i].binding);
+  }
+  if (t.length < 1)
+    return false;
+  for (let i = 1; i < t.length; i++) {
+    if (getDistance(map.e[unit.binding], map.e[t[i]]) < getDistance(map.e[unit.binding], map.e[t[ref]]))
+      ref = i;
+  }
+  let s = map.e[t[ref]];
+  let dest = map.e[unit.binding];
+  let dist = getDistance(s, dest);
+  let goal = {x:s.x, y:s.y};
+  if (getDistance({x:s.x + 1, y:s.y}, dest) < dist) {
+    goal.x = s.x + 1;
+    goal.y = s.y;
+    dist = getDistance({x:s.x + 1, y:s.y}, dest);
+  }
+  if (getDistance({x:s.x - 1, y:s.y}, dest) < dist) {
+    goal.x = s.x - 1;
+    goal.y = s.y;
+    dist = getDistance({x:s.x - 1, y:s.y}, dest);
+  }
+  if (getDistance({x:s.x, y:s.y + 1}, dest) < dist) {
+    goal.x = s.x;
+    goal.y = s.y + 1;
+    dist = getDistance({x:s.x, y:s.y + 1}, dest);
+  }
+  if (getDistance({x:s.x, y:s.y - 1}, dest) < dist) {
+    goal.x = s.x;
+    goal.y = s.y - 1;
+    dist = getDistance({x:s.x, y:s.y - 1}, dest);
+  }
+  goToSpot(unit, map.e[unit.binding], goal);
+  if (getDistance(s, dest) == 1)
+    heal(unit, enemyUnits[t[ref]]);
+  return true;
+}
+
 function chooseTarget(unit) {
   let ref = 0;
   let t = createList(unit);
@@ -717,6 +761,11 @@ function loop() {
 
 
 
+function heal(unitA, unitB) {
+  unitB.hp += unitA.attack + 2;
+  if (unitB.hp > unitB.maxhp)
+    unitB.hp = unitB.maxhp;
+}
 
 function fight(unitA, unitB) {
   let damageA = unitA.attack - unitB.defense;
@@ -860,7 +909,8 @@ function increment() {
     enemyToMove = 0;
     return;
   }
-  chooseTarget(enemyUnits[enemyToMove]);
+  if (enemyUnits[enemyToMove].type != 2 || !goHealing(enemyUnits[enemyToMove]))
+    chooseTarget(enemyUnits[enemyToMove]);
   enemyUnits[enemyToMove].wait = true;
   enemyToMove++;
 }
