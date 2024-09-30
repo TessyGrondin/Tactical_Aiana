@@ -716,6 +716,9 @@ function loop() {
       }
     } else if (phase == 2) {
       goToSpot(enemyUnits[1], map.e[1], map.exit);
+      phase = 3;
+    } else {
+      chooseTarget(enemyUnits[0]);
       phase = 0;
     }
   } else {
