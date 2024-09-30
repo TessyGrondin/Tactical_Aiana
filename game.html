@@ -271,6 +271,7 @@ function findEnemy(pos) {
 
 let test = -1;
 let phase = 0;
+let enemyToMove = 0;
 //0:player, 1:enemies, 2:thief, 3:boss
 
 
@@ -684,14 +685,24 @@ function loop() {
       for (let i = 0; i < playerUnits.length; i++)
         if (playerUnits[i].wait)
           count++;
-      if (count == playerUnits.length)
+      if (count == playerUnits.length) {
+        for (let i = 0; i < enemyUnits.length; i++)
+          enemyUnits[i].wait = false;
         phase = 1;
+      }
     } else if (phase == 1) {
-      for (let i = 0; i < enemyUnits.length; i++)
-        chooseTarget(enemyUnits[i]);
-      for (let i = 0; i < playerUnits.length; i++)
-        playerUnits[i].wait = false;
-      phase = 0;
+      let go = true;
+      for (let i = 0; i < enemyUnits.length; i++) {
+        if (!enemyUnits[i].wait) {
+          go = false;
+          break;
+        }
+      }
+      if (go) {
+        for (let i = 0; i < playerUnits.length; i++)
+          playerUnits[i].wait = false;
+        phase = 0;
+      }
     }
   } else {
     context.font = "20px Arial";
@@ -834,6 +845,27 @@ document.addEventListener('click', function(e) {
     });
   }
 });
+
+
+
+
+
+
+
+
+function increment() {
+  if (phase != 1)
+    return;
+  if (enemyToMove == enemyUnits.length) {
+    enemyToMove = 0;
+    return;
+  }
+  chooseTarget(enemyUnits[enemyToMove]);
+  enemyUnits[enemyToMove].wait = true;
+  enemyToMove++;
+}
+
+setInterval(increment, 500);
 
 requestAnimationFrame(loop);
 </script>
