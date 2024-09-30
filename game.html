@@ -811,6 +811,16 @@ function startFight(pos, cx, cy, r, align) {
 
 
 
+function playerCanHeal(onClick) {
+  if (selected == -1 || playerUnits[selected].type != 2)
+    return false;
+  if (onClick == selected || onClick == -1)
+    return false;
+  if (getDistance(map.p[playerUnits[selected].binding], map.p[playerUnits[onClick].binding]) > 1)
+    return false;
+  return true;
+}
+
 document.addEventListener('click', function(e) {
   let relativeX = e.x - canvas.offsetLeft;
   let relativeY = e.y - canvas.offsetTop;
@@ -846,6 +856,15 @@ document.addEventListener('click', function(e) {
     let unitOnClick = findUnit({y:Math.floor(relativeY / 32), x:Math.floor(relativeX / 32)});
     let enemyOnClick = findEnemy({y:Math.floor(relativeY / 32), x:Math.floor(relativeX / 32)});
 
+    if (playerCanHeal(unitOnClick)) {
+      heal(playerUnits[selected], playerUnits[unitOnClick]);
+      for (let i = 0 ; i < grid.length; i++)
+        grid[i].highlight = 0;
+      playerUnits[selected].wait = true;
+      selected = -1
+      dangerZone();
+      return;
+    }
     if (grid[Math.floor(relativeY / 32) * 10 + Math.floor(relativeX / 32)].highlight == 0 || (unitOnClick != -1 && unitOnClick != selected)) {
       for (let i = 0 ; i < grid.length; i++)
         grid[i].highlight = 0;
