@@ -718,6 +718,9 @@ function loop() {
       goToSpot(enemyUnits[1], map.e[1], map.exit);
       phase = 3;
     } else {
+      enemyUnits[0].hp += 2;
+      if (enemyUnits[0].hp > enemyUnits[0].maxhp)
+        enemyUnits[0].hp = enemyUnits[0].maxhp;
       chooseTarget(enemyUnits[0]);
       phase = 0;
     }
