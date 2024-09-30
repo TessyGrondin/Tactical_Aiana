@@ -31,118 +31,90 @@ context.textAlign = "center";
 context.fillStyle = 'blue';
 
 let premadeMaps = [
-    {
-        w:[{x:7, y:1}, {x:1, y:9}, {x:7, y:11}, {x:1, y:12}],
-        exit:{x:6, y:13},
-        b:{x:0, y:0},
-        t:{x:9, y:5},
-        e:[{x:2, y:2}, {x:5, y:2}, {x:3, y:4}],
-        p:[{x:3, y:12}, {x:2, y:13}, {x:4, y:13}]
-    },
-    {
-        w:[{x:6, y:6}, {x:6, y:8}, {x:1, y:9}, {x:5, y:12}, {x:1, y:13}],
-        exit:{x:5, y:4},
-        b:{x:4, y:3},
-        t:{x:0, y:0},
-        e:[{x:3, y:6}, {x:8, y:7}, {x:2, y:11}],
-        p:[{x:7, y:12}, {x:6, y:13}, {x:8, y:13}]
-    },
-    {
-        w:[{x:9, y:4}, {x:4, y:8}, {x:0, y:10}, {x:7, y:10}],
-        exit:{x:4, y:10},
-        b:{x:6, y:1},
-        t:{x:9, y:7},
-        e:[{x:3, y:1}, {x:4, y:3}, {x:7, y:4}, {x:2, y:5}],
-        p:[{x:3, y:12}, {x:2, y:13}, {x:4, y:13}]
-    },
-    {
-        w:[{x:2, y:0}, {x:6, y:2}, {x:8, y:2}, {x:3, y:5}],
-        exit:{x:5, y:13},
-        b:{x:2, y:2},
-        t:{x:7, y:1},
-        e:[{x:7, y:6}, {x:1, y:7}, {x:1, y:13}],
-        p:[{x:9, y:11}, {x:8, y:12}, {x:9, y:13}]
-    },
-    {
-        w:[{x:5, y:8}, {x:5, y:10}, {x:8, y:13}, {x:6, y:14}],
-        exit:{x:6, y:13},
-        b:{x:8, y:3},
-        t:{x:0, y:3},
-        e:[{x:5, y:2}, {x:5, y:4}, {x:6, y:5}, {x:8, y:6}],
-        p:[{x:2, y:12}, {x:1, y:13}, {x:3, y:13}]
-    },
-    {
-        w:[{x:5, y:0}, {x:3, y:2}, {x:2, y:4}, {x:5, y:6}, {x:3, y:14}],
-        exit:{x:0, y:8},
-        b:{x:9, y:14},
-        t:{x:0, y:0},
-        e:[{x:1, y:0}, {x:8, y:2}, {x:4, y:12}],
-        p:[{x:2, y:7}, {x:3, y:8}, {x:2, y:9}]
-    },
-    {
-        w:[{x:2, y:5}, {x:2, y:8}, {x:9, y:12}, {x:8, y:14}],
-        exit:{x:8, y:13},
-        b:{x:4, y:1},
-        t:{x:0, y:11},
-        e:[{x:5, y:4}, {x:6, y:4}, {x:4, y:6}, {x:8, y:6}],
-        p:[{x:8, y:12}, {x:7, y:13}, {x:9, y:13}]
-    },
-    {
-        w:[{x:1, y:0}, {x:7, y:4}, {x:9, y:6}, {x:7, y:8}, {x:0, y:9}],
-        exit:{x:8, y:11},
-        b:{x:7, y:6},
-        t:{x:0, y:5},
-        e:[{x:2, y:4}, {x:3, y:8}, {x:6, y:10}],
-        p:[{x:1, y:13}, {x:0, y:14}, {x:2, y:14}]
-    },
-    {
-        w:[{x:2, y:0}, {x:3, y:3}, {x:1, y:6}, {x:8, y:10}, {x:1, y:14}],
-        exit:{x:5, y:11},
-        b:{x:1, y:2},
-        t:{x:8, y:3},
-        e:[{x:5, y:2}, {x:6, y:5}, {x:1, y:8}],
-        p:[{x:6, y:12}, {x:5, y:13}, {x:7, y:13}]
-    },
-    {
-        w:[{x:5, y:0}, {x:3, y:1}, {x:9, y:1}, {x:0, y:2}, {x:2, y:10}],
-        exit:{x:8, y:14},
-        b:{x:7, y:12},
-        t:{x:1, y:1},
-        e:[{x:7, y:7}, {x:4, y:10}, {x:1, y:13}],
-        p:[{x:1, y:5}, {x:2, y:6}, {x:1, y:7}]
-    },
-    {
-        w:[{x:9, y:1}, {x:4, y:2}, {x:4, y:3}, {x:1, y:4}, {x:5, y:4}],
-        exit:{x:0, y:1},
-        b:{x:3, y:13},
-        t:{x:8, y:1},
-        e:[{x:3, y:10}, {x:1, y:12}, {x:5, y:12}],
-        p:[{x:2, y:4}, {x:4, y:4}, {x:3, y:5}]
-    },
-    {
-        w:[{x:2, y:1}, {x:5, y:6}, {x:4, y:8}, {x:0, y:14}],
-        exit:{x:2, y:5},
-        b:{x:7, y:13},
-        t:{x:9, y:1},
-        e:[{x:1, y:10}, {x:8, y:10}, {x:3, y:13}],
-        p:[{x:3, y:2}, {x:4, y:3}, {x:3, y:4}]
-    },
-    {
-        w:[{x:7, y:1}, {x:4, y:7}, {x:1, y:12}, {x:5, y:12}],
-        exit:{x:1, y:13},
-        b:{x:0, y:0},
-        t:{x:9, y:7},
-        e:[{x:6, y:1}, {x:2, y:2}, {x:0, y:3}, {x:5, y:4}],
-        p:[{x:3, y:10}, {x:2, y:11}, {x:4, y:11}]
-    },
-    {
-        w:[{x:3, y:5}, {x:3, y:7}, {x:8, y:9}, {x:3, y:12}],
-        exit:{x:8, y:4},
-        b:{x:0, y:14},
-        t:{x:3, y:1},
-        e:[{x:0, y:9}, {x:4, y:10}, {x:7, y:13}],
-        p:[{x:4, y:5}, {x:6, y:5}, {x:5, y:6}]
-    }
+  {
+    w:[{x:7, y:1}, {x:1, y:9}, {x:7, y:11}, {x:1, y:12}],
+    exit:{x:6, y:13},
+    e:[{x:0, y:0},{x:9, y:5},{x:2, y:2}, {x:5, y:2}, {x:3, y:4}],
+    p:[{x:3, y:12}, {x:2, y:13}, {x:4, y:13}]
+  },
+  {
+    w:[{x:6, y:6}, {x:6, y:8}, {x:1, y:9}, {x:5, y:12}, {x:1, y:13}],
+    exit:{x:5, y:4},
+    e:[{x:4, y:3},{x:0, y:0},{x:3, y:6}, {x:8, y:7}, {x:2, y:11}],
+    p:[{x:7, y:12}, {x:6, y:13}, {x:8, y:13}]
+  },
+  {
+    w:[{x:9, y:4}, {x:4, y:8}, {x:0, y:10}, {x:7, y:10}],
+    exit:{x:4, y:10},
+    e:[{x:6, y:1},{x:9, y:7},{x:3, y:1}, {x:4, y:3}, {x:7, y:4}, {x:2, y:5}],
+    p:[{x:3, y:12}, {x:2, y:13}, {x:4, y:13}]
+  },
+  {
+    w:[{x:2, y:0}, {x:6, y:2}, {x:8, y:2}, {x:3, y:5}],
+    exit:{x:5, y:13},
+    e:[{x:2, y:2},{x:7, y:1},{x:7, y:6}, {x:1, y:7}, {x:1, y:13}],
+    p:[{x:9, y:11}, {x:8, y:12}, {x:9, y:13}]
+  },
+  {
+    w:[{x:5, y:8}, {x:5, y:10}, {x:8, y:13}, {x:6, y:14}],
+    exit:{x:6, y:13},
+    e:[{x:8, y:3},{x:0, y:3},{x:5, y:2}, {x:5, y:4}, {x:6, y:5}, {x:8, y:6}],
+    p:[{x:2, y:12}, {x:1, y:13}, {x:3, y:13}]
+  },
+  {
+    w:[{x:5, y:0}, {x:3, y:2}, {x:2, y:4}, {x:5, y:6}, {x:3, y:14}],
+    exit:{x:0, y:8},
+    e:[{x:9, y:14},{x:0, y:0},{x:1, y:0}, {x:8, y:2}, {x:4, y:12}],
+    p:[{x:2, y:7}, {x:3, y:8}, {x:2, y:9}]
+  },
+  {
+    w:[{x:2, y:5}, {x:2, y:8}, {x:9, y:12}, {x:8, y:14}],
+    exit:{x:8, y:13},
+    e:[{x:4, y:1},{x:0, y:11},{x:5, y:4}, {x:6, y:4}, {x:4, y:6}, {x:8, y:6}],
+    p:[{x:8, y:12}, {x:7, y:13}, {x:9, y:13}]
+  },
+  {
+    w:[{x:1, y:0}, {x:7, y:4}, {x:9, y:6}, {x:7, y:8}, {x:0, y:9}],
+    exit:{x:8, y:11},
+    e:[{x:7, y:6},{x:0, y:5},{x:2, y:4}, {x:3, y:8}, {x:6, y:10}],
+    p:[{x:1, y:13}, {x:0, y:14}, {x:2, y:14}]
+  },
+  {
+    w:[{x:2, y:0}, {x:3, y:3}, {x:1, y:6}, {x:8, y:10}, {x:1, y:14}],
+    exit:{x:5, y:11},
+    e:[{x:1, y:2},{x:8, y:3},{x:5, y:2}, {x:6, y:5}, {x:1, y:8}],
+    p:[{x:6, y:12}, {x:5, y:13}, {x:7, y:13}]
+  },
+  {
+    w:[{x:5, y:0}, {x:3, y:1}, {x:9, y:1}, {x:0, y:2}, {x:2, y:10}],
+    exit:{x:8, y:14},
+    e:[{x:7, y:12},{x:1, y:1},{x:7, y:7}, {x:4, y:10}, {x:1, y:13}],
+    p:[{x:1, y:5}, {x:2, y:6}, {x:1, y:7}]
+  },
+  {
+    w:[{x:9, y:1}, {x:4, y:2}, {x:4, y:3}, {x:1, y:4}, {x:5, y:4}],
+    exit:{x:0, y:1},
+    e:[{x:3, y:13},{x:8, y:1},{x:3, y:10}, {x:1, y:12}, {x:5, y:12}],
+    p:[{x:2, y:4}, {x:4, y:4}, {x:3, y:5}]
+  },
+  {
+    w:[{x:2, y:1}, {x:5, y:6}, {x:4, y:8}, {x:0, y:14}],
+    exit:{x:2, y:5},
+    e:[{x:7, y:13},{x:9, y:1},{x:1, y:10}, {x:8, y:10}, {x:3, y:13}],
+    p:[{x:3, y:2}, {x:4, y:3}, {x:3, y:4}]
+  },
+  {
+    w:[{x:7, y:1}, {x:4, y:7}, {x:1, y:12}, {x:5, y:12}],
+    exit:{x:1, y:13},
+    e:[{x:0, y:0},{x:9, y:7},{x:6, y:1}, {x:2, y:2}, {x:0, y:3}, {x:5, y:4}],
+    p:[{x:3, y:10}, {x:2, y:11}, {x:4, y:11}]
+  },
+  {
+    w:[{x:3, y:5}, {x:3, y:7}, {x:8, y:9}, {x:3, y:12}],
+    exit:{x:8, y:4},
+    e:[{x:0, y:14},{x:3, y:1},{x:0, y:9}, {x:4, y:10}, {x:7, y:13}],
+    p:[{x:4, y:5}, {x:6, y:5}, {x:5, y:6}]
+  }
 ];
 
 
@@ -190,8 +162,8 @@ let playerUnits = [];
 for (let i = 0; i < 3; i++)
   playerUnits.push(new Unit(Math.floor(Math.random() * 3), i));
 let enemyUnits = [];
-let boss;
-let thief;
+let boss = new Unit(Math.floor(Math.random() * 2), 0);
+let thief = new Unit(0, 1);
 
 
 
@@ -253,10 +225,6 @@ function findEnemy(pos) {
   for (let i = 0; i < enemyUnits.length; i++)
     if (map.e[enemyUnits[i].binding].x == pos.x && map.e[enemyUnits[i].binding].y == pos.y)
       return i;
-  if (map.b.x == pos.x && map.b.y == pos.y)
-    return -2;
-  if (map.t.x == pos.x && map.t.y == pos.y)
-    return -3;
   return -1;
 }
 
@@ -271,7 +239,7 @@ function findEnemy(pos) {
 
 let test = -1;
 let phase = 0;
-let enemyToMove = 0;
+let enemyToMove = 2;
 //0:player, 1:enemies, 2:thief, 3:boss
 
 
@@ -356,8 +324,6 @@ function dangerZone() {
     grid[i].danger = [];
   for (let i = 0; i < map.e.length; i++)
     fillDanger(map.e[enemyUnits[i].binding], enemyUnits[i].movement, enemyUnits[i].range, enemyUnits[i].binding);
-  fillDanger(map.b, boss.movement, boss.range, -2);
-  fillDanger(map.t, thief.movement, thief.range, -4);
 }
 
 
@@ -481,7 +447,7 @@ function goToSpot(unit, s, dest) {
     return;
   }
   let dist = getDistance(s, dest);
-  let goal = {x:0, y:0};
+  let goal = map.e[unit.binding];
   for (let i = 0; i < unit.movement + 1; i++) {
     let j = unit.movement - i;
     if (findEnemy({x:s.x + j, y:s.y + i}) == -1 && isPresent({x:s.x + j, y:s.y + i}, unit.binding) && getDistance({x:s.x + j, y:s.y + i}, dest) < dist) {
@@ -655,11 +621,7 @@ let menu = false;
 
 function generateNewMap() {
   let select = Math.floor(Math.random() * premadeMaps.length);
-  map = premadeMaps[select];
-  enemyUnits = [];
-  for (let i = 0; i < map.e.length; i++)
-    enemyUnits.push(new Unit(Math.floor(Math.random() * 3), i));
-  thief = new Unit(0, 0);
+  thief = new Unit(0, 1);
   boss = new Unit(Math.floor(Math.random() * 2), 0);
   boss.attack += 2;
   boss.defense += 2;
@@ -668,6 +630,11 @@ function generateNewMap() {
   boss.movement = 0;
   boss.speed += 2;
   thief.range = 0;
+  enemyUnits.push(boss);
+  enemyUnits.push(thief);
+  map = premadeMaps[select];
+  for (let i = 2; i < map.e.length; i++)
+    enemyUnits.push(new Unit(Math.floor(Math.random() * 3), i));
   dangerZone();
 }
 
@@ -691,8 +658,9 @@ function loop() {
     for (let i = 0; i < map.w.length; i++)
       context.drawImage(tileImage, 2 * 32, 0, 32, 32, grid[coordinate(map.w[i].x, map.w[i].y)].x, grid[coordinate(map.w[i].x, map.w[i].y)].y, 32, 32);
     context.drawImage(tileImage, 32, 0, 32, 32, grid[coordinate(map.exit.x, map.exit.y)].x, grid[coordinate(map.exit.x, map.exit.y)].y, 32, 32);
-    context.drawImage(tileImage, 5* 32, 0, 32, 32, grid[coordinate(map.b.x, map.b.y)].x, grid[coordinate(map.b.x, map.b.y)].y, 32, 32);
-    for (let i = 0; i < map.e.length; i++)
+    context.drawImage(tileImage, 5* 32, 0, 32, 32, grid[coordinate(map.e[0].x, map.e[0].y)].x, grid[coordinate(map.e[0].x, map.e[0].y)].y, 32, 32);
+    context.drawImage(tileImage, 6* 32, 0, 32, 32, grid[coordinate(map.e[1].x, map.e[1].y)].x, grid[coordinate(map.e[1].x, map.e[1].y)].y, 32, 32);
+    for (let i = 2; i < map.e.length; i++)
       context.drawImage(tileImage, 4 * 32, 0, 32, 32, grid[coordinate(map.e[i].x, map.e[i].y)].x, grid[coordinate(map.e[i].x, map.e[i].y)].y, 32, 32);
     for (let i = 0; i < map.p.length; i++)
       context.drawImage(tileImage, 3 * 32, 0, 32, 32, grid[coordinate(map.p[i].x, map.p[i].y)].x, grid[coordinate(map.p[i].x, map.p[i].y)].y, 32, 32);
@@ -706,14 +674,13 @@ function loop() {
       context.fillText(playerUnits[i].hp + "/" + playerUnits[i].maxhp, map.p[i].x * 32 + 16, map.p[i].y * 32 - 10);
     }
     context.fillStyle = "red";
-    context.drawImage(tileImage, 6* 32, 0, 32, 32, grid[coordinate(map.t.x, map.t.y)].x, grid[coordinate(map.t.x, map.t.y)].y, 32, 32);
-    context.fillText(thief.hp + "/" + thief.maxhp, map.t.x * 32 + 16, map.t.y * 32 - 10);
-    for (let i = 0; i < enemyUnits.length; i++) {
+    context.fillText(thief.hp + "/" + thief.maxhp, map.e[1].x * 32 + 16, map.e[1].y * 32 - 10);
+    for (let i = 2; i < enemyUnits.length; i++) {
       context.drawImage(tileImage, (11 + enemyUnits[i].type) * 32, 0, 32, 32, grid[coordinate(map.e[enemyUnits[i].binding].x, map.e[enemyUnits[i].binding].y)].x, grid[coordinate(map.e[enemyUnits[i].binding].x, map.e[enemyUnits[i].binding].y)].y, 32, 32);
       context.fillText(enemyUnits[i].hp + "/" + enemyUnits[i].maxhp, map.e[i].x * 32 + 16, map.e[i].y * 32 - 10);
     }
-    context.drawImage(tileImage, (11 + boss.type) * 32, 0, 32, 32, grid[coordinate(map.b.x, map.b.y)].x, grid[coordinate(map.b.x, map.b.y)].y, 32, 32);
-    context.fillText(boss.hp + "/" + boss.maxhp, map.b.x * 32 + 16, map.b.y * 32 - 10);
+    context.drawImage(tileImage, (11 + boss.type) * 32, 0, 32, 32, grid[coordinate(map.e[0].x, map.e[0].y)].x, grid[coordinate(map.e[0].x, map.e[0].y)].y, 32, 32);
+    context.fillText(boss.hp + "/" + boss.maxhp, map.e[0].x * 32 + 16, map.e[0].y * 32 - 10);
     // context.fillStyle = "black";
     // context.fillText(test, canvas.width / 2, 50);
 
@@ -736,7 +703,7 @@ function loop() {
       }
     } else if (phase == 1) {
       let go = true;
-      for (let i = 0; i < enemyUnits.length; i++) {
+      for (let i = 2; i < enemyUnits.length; i++) {
         if (!enemyUnits[i].wait) {
           go = false;
           break;
@@ -875,12 +842,7 @@ document.addEventListener('click', function(e) {
       }
 
     } else if (grid[Math.floor(relativeY / 32) * 10 + Math.floor(relativeX / 32)].highlight != 0 && startFight(map.p[playerUnits[selected].binding], Math.floor(relativeX / 32), Math.floor(relativeY / 32), playerUnits[selected].range, 0)) {
-      if (enemyOnClick > -1)
-        fight(playerUnits[selected], enemyUnits[enemyOnClick]);
-      else if (enemyOnClick == -2)
-        fight(playerUnits[selected], boss);
-      else
-        fight(playerUnits[selected], thief);
+      fight(playerUnits[selected], enemyUnits[enemyOnClick]);
       playerUnits[selected].wait = true;
       selected = -1;
       for (let i = 0 ; i < grid.length; i++)
@@ -925,7 +887,7 @@ function increment() {
   if (phase != 1)
     return;
   if (enemyToMove == enemyUnits.length) {
-    enemyToMove = 0;
+    enemyToMove = 2;
     return;
   }
   if (enemyUnits[enemyToMove].type != 2 || !goHealing(enemyUnits[enemyToMove]))
