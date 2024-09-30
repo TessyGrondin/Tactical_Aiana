@@ -712,8 +712,11 @@ function loop() {
       if (go) {
         for (let i = 0; i < playerUnits.length; i++)
           playerUnits[i].wait = false;
-        phase = 0;
+        phase = 2;
       }
+    } else if (phase == 2) {
+      goToSpot(enemyUnits[1], map.e[1], map.exit);
+      phase = 0;
     }
   } else {
     context.font = "20px Arial";
