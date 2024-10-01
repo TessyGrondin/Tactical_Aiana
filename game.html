@@ -156,6 +156,17 @@ class Unit {
     this.binding = binding;
     this.wait = false;
   }
+
+  levelUp() {
+    if (this.exp < 100)
+      return;
+    this.attack += Math.floor(Math.random() * 2);
+    this.defense += Math.floor(Math.random() * 2);
+    this.speed += Math.floor(Math.random() * 2);
+    this.maxhp += Math.floor(Math.random() * 5);
+    this.hp = this.maxhp;
+    this.exp -= 100;
+  }
 }
 
 let playerUnits = [];
@@ -767,15 +778,18 @@ function loop() {
 
 
 function heal(unitA, unitB) {
-  if (unitA.hp < 0 || unitB.hp < 0)
+  if (unitA.hp < 1 || unitB.hp < 1)
     return;
   unitB.hp += unitA.attack + 2;
   if (unitB.hp > unitB.maxhp)
     unitB.hp = unitB.maxhp;
+  unitA.exp += 10;
+  for (let i = 0; i < playerUnits.length; i++)
+    playerUnits[i].levelUp();
 }
 
 function fight(unitA, unitB) {
-  if (unitA.hp < 0 || unitB.hp < 0)
+  if (unitA.hp < 1 || unitB.hp < 1)
     return;
   let damageA = unitA.attack - unitB.defense;
   damageA = (damageA < 1) ? 1 : damageA;
@@ -783,16 +797,34 @@ function fight(unitA, unitB) {
   damageB = (damageB < 1) ? 1 : damageB;
 
   unitB.hp -= damageA;
-  if (unitB.hp <= 0)
+  if (unitB.hp <= 0) {
+    unitA.exp += 75;
+    for (let i = 0; i < playerUnits.length; i++)
+      playerUnits[i].levelUp();
     return;
+  }
   let rB = unitB.range;
   rB = (rB == 0) ? 1 : rB;
   if (unitA.range == rB)
     unitA.hp -= damageB;
-  if (unitA.hp <= 0)
+  if (unitA.hp <= 0) {
+    unitB.exp += 75;
+    for (let i = 0; i < playerUnits.length; i++)
+      playerUnits[i].levelUp();
     return;
+  }
   if (unitA.speed > unitB.speed + 3)
     unitB.hp -= damageA;
+  if (unitB.hp <= 0) {
+    unitA.exp += 75;
+    for (let i = 0; i < playerUnits.length; i++)
+      playerUnits[i].levelUp();
+    return;
+  }
+  unitA.exp += 10;
+  unitB.exp += 10;
+  for (let i = 0; i < playerUnits.length; i++)
+    playerUnits[i].levelUp();
 }
 
 function startFight(pos, cx, cy, r, align) {
