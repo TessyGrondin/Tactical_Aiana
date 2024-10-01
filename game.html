@@ -933,6 +933,17 @@ document.addEventListener('click', function(e) {
   if (end) {
     menu = true;
     end = false;
+    mapNumber = 0;
+    playerUnits = [];
+    for (let i = 0; i < 3; i++) {
+      playerUnits.push(new Unit(Math.floor(Math.random() * 3), i));
+      playerUnits[i].attack += 2;
+      playerUnits[i].defense += 2;
+      playerUnits[i].maxhp += 2;
+      playerUnits[i].hp += 2;
+      playerUnits[i].speed += 2;
+    }
+    generateNewMap();
 
 
 
