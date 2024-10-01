@@ -662,6 +662,9 @@ function generateNewMap() {
   map = premadeMaps[select];
   for (let i = 2; i < map.e.length; i++)
     enemyUnits.push(new Unit(Math.floor(Math.random() * 3), i));
+  for (let i = 0; i < playerUnits.length; i++)
+    if (playerUnits[i].hp > 0)
+      playerUnits[i].hp = playerUnits[i].maxhp;
   dangerZone();
 }
 
@@ -756,8 +759,12 @@ function loop() {
       }
     } else if (phase == 2) {
       goToSpot(enemyUnits[1], map.e[1], map.exit);
+      if (map.e[1].x == map.exit.x && map.e[1].y == map.exit.y)
+        enemyUnits[1].hp = 0;
       phase = 3;
     } else {
+      if (enemyUnits[0].hp < 1)
+        return;
       enemyUnits[0].hp += 2;
       if (enemyUnits[0].hp > enemyUnits[0].maxhp)
         enemyUnits[0].hp = enemyUnits[0].maxhp;
