@@ -440,7 +440,7 @@ function isPresent(pos, binding) {
 }
 
 function goToSpot(unit, s, dest) {
-  if (isPresent(dest, unit.binding)) {
+  if (isPresent(dest, unit.binding) && findEnemy(dest) == -1 && findUnit(dest) == 1) {
     map.e[unit.binding].x = dest.x;
     map.e[unit.binding].y = dest.y;
     dangerZone();
@@ -448,27 +448,29 @@ function goToSpot(unit, s, dest) {
   }
   let dist = getDistance(s, dest);
   let goal = map.e[unit.binding];
-  for (let i = 0; i < unit.movement + 1; i++) {
-    let j = unit.movement - i;
-    if (findEnemy({x:s.x + j, y:s.y + i}) == -1 && isPresent({x:s.x + j, y:s.y + i}, unit.binding) && getDistance({x:s.x + j, y:s.y + i}, dest) < dist) {
-      goal.x = s.x + j;
-      goal.y = s.y + i;
-      dist = getDistance({x:s.x + j, y:s.y + i}, dest);
-    }
-    if (findEnemy({x:s.x + j, y:s.y + i}) == -1 && isPresent({x:s.x - j, y:s.y + i}, unit.binding) && getDistance({x:s.x - j, y:s.y + i}, dest) < dist) {
-      goal.x = s.x - j;
-      goal.y = s.y + i;
-      dist = getDistance({x:s.x - j, y:s.y + i}, dest);
-    }
-    if (findEnemy({x:s.x + j, y:s.y + i}) == -1 && isPresent({x:s.x + j, y:s.y - i}, unit.binding) && getDistance({x:s.x + j, y:s.y - i}, dest) < dist) {
-      goal.x = s.x + j;
-      goal.y = s.y - i;
-      dist = getDistance({x:s.x + j, y:s.y - i}, dest);
-    }
-    if (findEnemy({x:s.x + j, y:s.y + i}) == -1 && isPresent({x:s.x - j, y:s.y - i}, unit.binding) && getDistance({x:s.x - j, y:s.y - i}, dest) < dist) {
-      goal.x = s.x - j;
-      goal.y = s.y - i;
-      dist = getDistance({x:s.x - j, y:s.y - i}, dest);
+  for (let max = unit.movement; max > 0; max--) {
+    for (let i = 0; i < max + 1; i++) {
+      let j = max - i;
+      if (findEnemy({x:s.x + j, y:s.y + i}) == -1 && isPresent({x:s.x + j, y:s.y + i}, unit.binding) && getDistance({x:s.x + j, y:s.y + i}, dest) < dist) {
+        goal.x = s.x + j;
+        goal.y = s.y + i;
+        dist = getDistance({x:s.x + j, y:s.y + i}, dest);
+      }
+      if (findEnemy({x:s.x + j, y:s.y + i}) == -1 && isPresent({x:s.x - j, y:s.y + i}, unit.binding) && getDistance({x:s.x - j, y:s.y + i}, dest) < dist) {
+        goal.x = s.x - j;
+        goal.y = s.y + i;
+        dist = getDistance({x:s.x - j, y:s.y + i}, dest);
+      }
+      if (findEnemy({x:s.x + j, y:s.y + i}) == -1 && isPresent({x:s.x + j, y:s.y - i}, unit.binding) && getDistance({x:s.x + j, y:s.y - i}, dest) < dist) {
+        goal.x = s.x + j;
+        goal.y = s.y - i;
+        dist = getDistance({x:s.x + j, y:s.y - i}, dest);
+      }
+      if (findEnemy({x:s.x + j, y:s.y + i}) == -1 && isPresent({x:s.x - j, y:s.y - i}, unit.binding) && getDistance({x:s.x - j, y:s.y - i}, dest) < dist) {
+        goal.x = s.x - j;
+        goal.y = s.y - i;
+        dist = getDistance({x:s.x - j, y:s.y - i}, dest);
+      }
     }
   }
   map.e[unit.binding].x = goal.x;
