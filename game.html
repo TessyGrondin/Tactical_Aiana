@@ -159,8 +159,14 @@ class Unit {
 }
 
 let playerUnits = [];
-for (let i = 0; i < 3; i++)
+for (let i = 0; i < 3; i++) {
   playerUnits.push(new Unit(Math.floor(Math.random() * 3), i));
+  playerUnits[i].attack += 2;
+  playerUnits[i].defense += 2;
+  playerUnits[i].maxhp += 2;
+  playerUnits[i].hp += 2;
+  playerUnits[i].speed += 2;
+}
 let enemyUnits = [];
 let boss = new Unit(Math.floor(Math.random() * 2), 0);
 let thief = new Unit(0, 1);
@@ -215,16 +221,22 @@ function validCoordinates(x, y)
 }
 
 function findUnit(pos) {
-  for (let i = 0; i < playerUnits.length; i++)
+  for (let i = 0; i < playerUnits.length; i++) {
+    if (playerUnits[i].hp < 1)
+      continue;
     if (map.p[playerUnits[i].binding].x == pos.x && map.p[playerUnits[i].binding].y == pos.y)
       return i;
+  }
   return -1;
 }
 
 function findEnemy(pos) {
-  for (let i = 0; i < enemyUnits.length; i++)
+  for (let i = 0; i < enemyUnits.length; i++) {
+    if (enemyUnits[i].hp < 1)
+      continue;
     if (map.e[enemyUnits[i].binding].x == pos.x && map.e[enemyUnits[i].binding].y == pos.y)
       return i;
+  }
   return -1;
 }
 
@@ -322,8 +334,10 @@ function fillDanger(start, m, r, id) {
 function dangerZone() {
   for (let i = 0; i < grid.length; i++)
     grid[i].danger = [];
-  for (let i = 0; i < map.e.length; i++)
-    fillDanger(map.e[enemyUnits[i].binding], enemyUnits[i].movement, enemyUnits[i].range, enemyUnits[i].binding);
+  for (let i = 0; i < enemyUnits.length; i++) {
+    if (enemyUnits[i].hp > 0)
+      fillDanger(map.e[enemyUnits[i].binding], enemyUnits[i].movement, enemyUnits[i].range, enemyUnits[i].binding);
+  }
 }
 
 
@@ -625,12 +639,12 @@ function generateNewMap() {
   let select = Math.floor(Math.random() * premadeMaps.length);
   thief = new Unit(0, 1);
   boss = new Unit(Math.floor(Math.random() * 2), 0);
-  boss.attack += 2;
-  boss.defense += 2;
-  boss.maxhp += 2;
-  boss.hp += 2;
+  boss.attack += 3;
+  boss.defense += 3;
+  boss.maxhp += 3;
+  boss.hp += 3;
+  boss.speed += 3;
   boss.movement = 0;
-  boss.speed += 2;
   thief.range = 0;
   enemyUnits.push(boss);
   enemyUnits.push(thief);
@@ -660,29 +674,40 @@ function loop() {
     for (let i = 0; i < map.w.length; i++)
       context.drawImage(tileImage, 2 * 32, 0, 32, 32, grid[coordinate(map.w[i].x, map.w[i].y)].x, grid[coordinate(map.w[i].x, map.w[i].y)].y, 32, 32);
     context.drawImage(tileImage, 32, 0, 32, 32, grid[coordinate(map.exit.x, map.exit.y)].x, grid[coordinate(map.exit.x, map.exit.y)].y, 32, 32);
-    context.drawImage(tileImage, 5* 32, 0, 32, 32, grid[coordinate(map.e[0].x, map.e[0].y)].x, grid[coordinate(map.e[0].x, map.e[0].y)].y, 32, 32);
-    context.drawImage(tileImage, 6* 32, 0, 32, 32, grid[coordinate(map.e[1].x, map.e[1].y)].x, grid[coordinate(map.e[1].x, map.e[1].y)].y, 32, 32);
+    if (enemyUnits[0].hp > 0)
+      context.drawImage(tileImage, 5* 32, 0, 32, 32, grid[coordinate(map.e[0].x, map.e[0].y)].x, grid[coordinate(map.e[0].x, map.e[0].y)].y, 32, 32);
+    if (enemyUnits[1].hp > 0)
+      context.drawImage(tileImage, 6* 32, 0, 32, 32, grid[coordinate(map.e[1].x, map.e[1].y)].x, grid[coordinate(map.e[1].x, map.e[1].y)].y, 32, 32);
     for (let i = 2; i < map.e.length; i++)
-      context.drawImage(tileImage, 4 * 32, 0, 32, 32, grid[coordinate(map.e[i].x, map.e[i].y)].x, grid[coordinate(map.e[i].x, map.e[i].y)].y, 32, 32);
+      if (enemyUnits[i].hp > 0)
+        context.drawImage(tileImage, 4 * 32, 0, 32, 32, grid[coordinate(map.e[i].x, map.e[i].y)].x, grid[coordinate(map.e[i].x, map.e[i].y)].y, 32, 32);
     for (let i = 0; i < map.p.length; i++)
-      context.drawImage(tileImage, 3 * 32, 0, 32, 32, grid[coordinate(map.p[i].x, map.p[i].y)].x, grid[coordinate(map.p[i].x, map.p[i].y)].y, 32, 32);
+      if (playerUnits[i].hp > 0)
+        context.drawImage(tileImage, 3 * 32, 0, 32, 32, grid[coordinate(map.p[i].x, map.p[i].y)].x, grid[coordinate(map.p[i].x, map.p[i].y)].y, 32, 32);
 
     context.font = "20px Arial";
     context.fillStyle = "blue";
     for (let i = 0; i < playerUnits.length; i++) {
+      if (playerUnits[i].hp < 1)
+        continue;
       context.drawImage(tileImage, (11 + playerUnits[i].type) * 32, 0, 32, 32, grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].x, grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].y, 32, 32);
       if (playerUnits[i].wait)
         context.drawImage(tileImage, 10 * 32, 0, 32, 32, grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].x, grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].y, 32, 32);
       context.fillText(playerUnits[i].hp + "/" + playerUnits[i].maxhp, map.p[i].x * 32 + 16, map.p[i].y * 32 - 10);
     }
     context.fillStyle = "red";
-    context.fillText(thief.hp + "/" + thief.maxhp, map.e[1].x * 32 + 16, map.e[1].y * 32 - 10);
+    if (enemyUnits[1].hp > 0)
+      context.fillText(thief.hp + "/" + thief.maxhp, map.e[1].x * 32 + 16, map.e[1].y * 32 - 10);
     for (let i = 2; i < enemyUnits.length; i++) {
+      if (enemyUnits[i].hp < 1)
+        continue;
       context.drawImage(tileImage, (11 + enemyUnits[i].type) * 32, 0, 32, 32, grid[coordinate(map.e[enemyUnits[i].binding].x, map.e[enemyUnits[i].binding].y)].x, grid[coordinate(map.e[enemyUnits[i].binding].x, map.e[enemyUnits[i].binding].y)].y, 32, 32);
       context.fillText(enemyUnits[i].hp + "/" + enemyUnits[i].maxhp, map.e[i].x * 32 + 16, map.e[i].y * 32 - 10);
     }
-    context.drawImage(tileImage, (11 + boss.type) * 32, 0, 32, 32, grid[coordinate(map.e[0].x, map.e[0].y)].x, grid[coordinate(map.e[0].x, map.e[0].y)].y, 32, 32);
-    context.fillText(boss.hp + "/" + boss.maxhp, map.e[0].x * 32 + 16, map.e[0].y * 32 - 10);
+    if (enemyUnits[0].hp > 0) {
+      context.drawImage(tileImage, (11 + boss.type) * 32, 0, 32, 32, grid[coordinate(map.e[0].x, map.e[0].y)].x, grid[coordinate(map.e[0].x, map.e[0].y)].y, 32, 32);
+      context.fillText(boss.hp + "/" + boss.maxhp, map.e[0].x * 32 + 16, map.e[0].y * 32 - 10);
+    }
     // context.fillStyle = "black";
     // context.fillText(test, canvas.width / 2, 50);
 
@@ -700,7 +725,8 @@ function loop() {
           count++;
       if (count == playerUnits.length) {
         for (let i = 0; i < enemyUnits.length; i++)
-          enemyUnits[i].wait = false;
+          if (enemyUnits[i].hp > 0)
+            enemyUnits[i].wait = false;
         phase = 1;
       }
     } else if (phase == 1) {
@@ -713,7 +739,8 @@ function loop() {
       }
       if (go) {
         for (let i = 0; i < playerUnits.length; i++)
-          playerUnits[i].wait = false;
+          if (playerUnits[i].hp > 1)
+            playerUnits[i].wait = false;
         phase = 2;
       }
     } else if (phase == 2) {
@@ -740,12 +767,16 @@ function loop() {
 
 
 function heal(unitA, unitB) {
+  if (unitA.hp < 0 || unitB.hp < 0)
+    return;
   unitB.hp += unitA.attack + 2;
   if (unitB.hp > unitB.maxhp)
     unitB.hp = unitB.maxhp;
 }
 
 function fight(unitA, unitB) {
+  if (unitA.hp < 0 || unitB.hp < 0)
+    return;
   let damageA = unitA.attack - unitB.defense;
   damageA = (damageA < 1) ? 1 : damageA;
   let damageB = unitB.attack - unitA.defense;
