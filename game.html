@@ -263,6 +263,7 @@ function findEnemy(pos) {
 let test = -1;
 let phase = 0;
 let enemyToMove = 2;
+let mapNumber = 1;
 //0:player, 1:enemies, 2:thief, 3:boss
 
 
@@ -657,14 +658,18 @@ function generateNewMap() {
   boss.speed += 3;
   boss.movement = 0;
   thief.range = 0;
+  enemyUnits = [];
   enemyUnits.push(boss);
   enemyUnits.push(thief);
   map = premadeMaps[select];
   for (let i = 2; i < map.e.length; i++)
     enemyUnits.push(new Unit(Math.floor(Math.random() * 3), i));
-  for (let i = 0; i < playerUnits.length; i++)
-    if (playerUnits[i].hp > 0)
+  for (let i = 0; i < playerUnits.length; i++) {
+    if (playerUnits[i].hp > 0) {
       playerUnits[i].hp = playerUnits[i].maxhp;
+      playerUnits[i].wait = false;
+    }
+  }
   dangerZone();
 }
 
@@ -771,6 +776,37 @@ function loop() {
       chooseTarget(enemyUnits[0]);
       phase = 0;
     }
+
+
+
+
+
+
+
+    let change = 0;
+    for (let i = 0; i < enemyUnits.length; i++)
+      if (enemyUnits[i].hp < 1)
+        change++;
+    if (change == enemyUnits.length) {
+      mapNumber++;
+      phase = 0;
+      generateNewMap();
+    }
+    if (mapNumber == 5)
+      end = true;
+
+
+
+
+
+
+
+    let death = 0;
+    for (let i = 0; i < playerUnits.length; i++)
+      if (playerUnits[i].hp < 1)
+        death++
+    if (death == playerUnits.length)
+      end = true;
   } else {
     context.font = "20px Arial";
     context.fillText("tap to restart", canvas.width / 2, canvas.height - 10);
