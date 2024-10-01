@@ -661,7 +661,14 @@ function generateNewMap() {
   enemyUnits = [];
   enemyUnits.push(boss);
   enemyUnits.push(thief);
-  map = premadeMaps[select];
+  map = {w:[], exit:{x:0, y:0}, e:[], p:[]};
+  for (let i = 0; i < premadeMaps[select].w.length; i++)
+    map.w.push({x:premadeMaps[select].w[i].x, y:premadeMaps[select].w[i].y});
+  for (let i = 0; i < premadeMaps[select].e.length; i++)
+    map.e.push({x:premadeMaps[select].e[i].x, y:premadeMaps[select].e[i].y});
+  for (let i = 0; i < premadeMaps[select].p.length; i++)
+    map.p.push({x:premadeMaps[select].p[i].x, y:premadeMaps[select].p[i].y});
+  map.exit = {x:premadeMaps[select].exit.x, y:premadeMaps[select].exit.y};
   for (let i = 2; i < map.e.length; i++)
     enemyUnits.push(new Unit(Math.floor(Math.random() * 3), i));
   for (let i = 0; i < playerUnits.length; i++) {
