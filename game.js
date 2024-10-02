@@ -102,7 +102,14 @@ let premadeMaps = [
 
 
 
-let inventory = {money:0, obj1:0, obj2:0, obj3:0};
+let inventory = {money:0, obj1:0, obj2:0, obj3:0, potion:2};
+
+function usePotion(unit) {
+    if (unit.hp == unit.maxhp || inventory.potion < 1)
+        return;
+    unit.hp = (unit.hp + 3 <= unit.maxhp) ? unit.hp + 3 : unit.maxhp;
+    inventory.potion--;
+}
 
 
 
@@ -149,7 +156,6 @@ class Unit {
     this.defense += Math.floor(Math.random() * 2);
     this.speed += Math.floor(Math.random() * 2);
     this.maxhp += Math.floor(Math.random() * 5);
-    this.hp = this.maxhp;
     this.exp -= 100;
   }
 }
@@ -245,7 +251,6 @@ function findEnemy(pos) {
 
 
 
-let test = -1;
 let phase = 0;
 let enemyToMove = 2;
 let mapNumber = 1;
