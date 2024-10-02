@@ -102,6 +102,16 @@ let premadeMaps = [
 
 
 
+let inventory = {money:0, obj1:0, obj2:0, obj3:0};
+
+
+
+
+
+
+
+
+
 let closeCombatArchetype = {range:1, movement:3, maxhp:20, hp:20, attack:4, defense:2, speed:3};
 let distanceArchetype = {range:2, movement:2, maxhp:18, hp:18, attack:3, defense:3, speed:2};
 let supportArchetype = {range:2, movement:2, maxhp:15, hp:15, attack:1, defense:0, speed:1};
@@ -239,7 +249,6 @@ let test = -1;
 let phase = 0;
 let enemyToMove = 2;
 let mapNumber = 1;
-//0:player, 1:enemies, 2:thief, 3:boss
 
 
 
@@ -771,6 +780,7 @@ function loop() {
         change++;
     if (change == enemyUnits.length) {
       mapNumber++;
+      inventory.money += 100;
       phase = 0;
       generateNewMap();
     }
@@ -786,10 +796,15 @@ function loop() {
     let death = 0;
     for (let i = 0; i < playerUnits.length; i++)
       if (playerUnits[i].hp < 1)
-        death++
+        death++;
     if (death == playerUnits.length)
       end = true;
   } else {
+    context.font = "30px Arial";
+    context.fillText("money : " + inventory.money, canvas.width / 2, 30);
+    context.fillText("obj1 : " + inventory.obj1, canvas.width / 2, 60);
+    context.fillText("obj2 : " + inventory.obj2, canvas.width / 2, 90);
+    context.fillText("obj3 : " + inventory.obj3, canvas.width / 2, 120);
     context.font = "20px Arial";
     context.fillText("tap to restart", canvas.width / 2, canvas.height - 10);
   }
@@ -887,6 +902,20 @@ function playerCanHeal(onClick) {
   return true;
 }
 
+function addObject() {
+    let oType = Math.floor(Math.random() * 4);
+
+    if (oType == 0)
+        inventory.money += 50;
+    else if (oType == 1)
+        inventory.obj1++;
+    else if (oType == 2)
+        inventory.obj2++;
+    else
+        inventory.obj3++;
+    console.log(oType);
+}
+
 document.addEventListener('click', function(e) {
   let relativeX = e.x - canvas.offsetLeft;
   let relativeY = e.y - canvas.offsetTop;
@@ -953,6 +982,8 @@ document.addEventListener('click', function(e) {
 
     } else if (grid[Math.floor(relativeY / 32) * 10 + Math.floor(relativeX / 32)].highlight != 0 && startFight(map.p[playerUnits[selected].binding], Math.floor(relativeX / 32), Math.floor(relativeY / 32), playerUnits[selected].range, 0)) {
       fight(playerUnits[selected], enemyUnits[enemyOnClick]);
+      if (enemyOnClick == 1 && enemyUnits[1].hp < 1)
+        addObject();
       playerUnits[selected].wait = true;
       selected = -1;
       for (let i = 0 ; i < grid.length; i++)
