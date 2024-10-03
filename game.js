@@ -121,6 +121,7 @@ function usePotion(unit) {
 //menu
 let cross = new Image();
 cross.src = "cross.png";
+let crossFrame = 0;
 let shadow = new Image();
 shadow.src = "shadow.png";
 let activMenu = false;
@@ -748,6 +749,7 @@ function loop() {
 
     if (activMenu) {
       context.drawImage(shadow, 0, 0, shadow.width, shadow.height, 0, 0, canvas.width, canvas.height);
+      context.drawImage(cross, crossFrame * cross.width / 2, 0, cross.width / 2, cross.height, canvas.width - cross.width / 2, 0, cross.width / 2, cross.height);
     }
 
 
@@ -990,27 +992,6 @@ document.addEventListener('click', function(e) {
     let unitOnClick = findUnit({y:Math.floor(relativeY / 32), x:Math.floor(relativeX / 32)});
     let enemyOnClick = findEnemy({y:Math.floor(relativeY / 32), x:Math.floor(relativeX / 32)});
 
-
-
-
-
-
-
-
-
-
-    if (selected == -1) {
-      activMenu = true;
-      return;
-    }
-
-
-
-
-
-
-
-
     if (!activMenu) {
       if (playerCanHeal(unitOnClick)) {
         heal(playerUnits[selected], playerUnits[unitOnClick]);
@@ -1068,6 +1049,28 @@ document.addEventListener('click', function(e) {
   }
 });
 
+document.addEventListener('mousedown', function(e) {
+  let relativeX = e.x - canvas.offsetLeft;
+  let relativeY = e.y - canvas.offsetTop;
+
+  if (selected == -1 && !activMenu) {
+    activMenu = true;
+    return;
+  }
+  if (relativeX < canvas.width - cross.width / 2 || relativeX > canvas.width - cross.width / 2 + cross.width / 2 || relativeY < 0 || relativeY > cross.height)
+    return;
+  crossFrame = 1;
+});
+
+document.addEventListener('mouseup', function(e) {
+  let relativeX = e.x - canvas.offsetLeft;
+  let relativeY = e.y - canvas.offsetTop;
+
+  if (relativeX < canvas.width - cross.width / 2 || relativeX > canvas.width - cross.width / 2 + cross.width / 2 || relativeY < 0 || relativeY > cross.height)
+    return;
+  crossFrame = 0;
+  activMenu = false;
+});
 
 
 
