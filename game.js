@@ -716,27 +716,39 @@ function loop() {
         context.drawImage(tileImage, 3 * 32, 0, 32, 32, grid[coordinate(map.p[i].x, map.p[i].y)].x, grid[coordinate(map.p[i].x, map.p[i].y)].y, 32, 32);
 
     context.font = "20px Arial";
-    context.fillStyle = "blue";
+    context.fillStyle = "white";
     for (let i = 0; i < playerUnits.length; i++) {
       if (playerUnits[i].hp < 1)
         continue;
       context.drawImage(tileImage, (11 + playerUnits[i].type) * 32, 0, 32, 32, grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].x, grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].y, 32, 32);
       if (playerUnits[i].wait)
         context.drawImage(tileImage, 10 * 32, 0, 32, 32, grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].x, grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].y, 32, 32);
-      context.fillText(playerUnits[i].hp + "/" + playerUnits[i].maxhp, map.p[i].x * 32 + 16, map.p[i].y * 32 - 10);
+      for (let j = 0; j < playerUnits[i].maxhp; j++) {
+        if (j < 32)
+          context.fillRect(grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].x + j, grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].y + 30, 1, 2);
+        else
+          context.fillRect(grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].x + j - 32, grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].y + 28, 1, 2);
+      }
+      context.fillStyle = "blue";
+      for (let j = 0; j < playerUnits[i].hp; j++) {
+        if (j < 32)
+          context.fillRect(grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].x + j, grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].y + 30, 1, 2);
+        else
+          context.fillRect(grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].x + j - 32, grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].y + 28, 1, 2);
+      }
+      context.fillStyle = "white";
     }
-    context.fillStyle = "red";
-    if (enemyUnits[1].hp > 0)
-      context.fillText(thief.hp + "/" + thief.maxhp, map.e[1].x * 32 + 16, map.e[1].y * 32 - 10);
-    for (let i = 2; i < enemyUnits.length; i++) {
+    for (let i = 0; i < enemyUnits.length; i++) {
       if (enemyUnits[i].hp < 1)
         continue;
-      context.drawImage(tileImage, (11 + enemyUnits[i].type) * 32, 0, 32, 32, grid[coordinate(map.e[enemyUnits[i].binding].x, map.e[enemyUnits[i].binding].y)].x, grid[coordinate(map.e[enemyUnits[i].binding].x, map.e[enemyUnits[i].binding].y)].y, 32, 32);
-      context.fillText(enemyUnits[i].hp + "/" + enemyUnits[i].maxhp, map.e[i].x * 32 + 16, map.e[i].y * 32 - 10);
-    }
-    if (enemyUnits[0].hp > 0) {
-      context.drawImage(tileImage, (11 + boss.type) * 32, 0, 32, 32, grid[coordinate(map.e[0].x, map.e[0].y)].x, grid[coordinate(map.e[0].x, map.e[0].y)].y, 32, 32);
-      context.fillText(boss.hp + "/" + boss.maxhp, map.e[0].x * 32 + 16, map.e[0].y * 32 - 10);
+      if (i != 1)
+        context.drawImage(tileImage, (11 + enemyUnits[i].type) * 32, 0, 32, 32, grid[coordinate(map.e[enemyUnits[i].binding].x, map.e[enemyUnits[i].binding].y)].x, grid[coordinate(map.e[enemyUnits[i].binding].x, map.e[enemyUnits[i].binding].y)].y, 32, 32);
+      for (let j = 0; j < enemyUnits[i].maxhp; j++)
+        context.fillRect(grid[coordinate(map.e[enemyUnits[i].binding].x, map.e[enemyUnits[i].binding].y)].x + j, grid[coordinate(map.e[enemyUnits[i].binding].x, map.e[enemyUnits[i].binding].y)].y + 30, 1, 2);
+      context.fillStyle = "red";
+      for (let j = 0; j < enemyUnits[i].hp; j++)
+        context.fillRect(grid[coordinate(map.e[enemyUnits[i].binding].x, map.e[enemyUnits[i].binding].y)].x + j, grid[coordinate(map.e[enemyUnits[i].binding].x, map.e[enemyUnits[i].binding].y)].y + 30, 1, 2);
+      context.fillStyle = "white";
     }
     // context.fillStyle = "black";
     // context.fillText(test, canvas.width / 2, 50);
@@ -754,6 +766,21 @@ function loop() {
       context.fillStyle = "white";
       context.font = "30px Arial";
       context.fillText("x " + inventory.potion, 84, 50);
+      context.font = "20px Arial";
+      for (let i = 0; i < playerUnits.length; i++) {
+        context.fillStyle = "white";
+        context.fillRect(40 + i * 90, 100, 48, 48);
+        context.drawImage(tileImage, (playerUnits[i].type + 11) * 32, 0, 32, 32, 40 + i * 90, 100, 48, 48);
+        context.fillText(playerUnits[i].hp + "/" + playerUnits[i].maxhp, 65 + i * 90, 170);
+        context.fillText("atk:" + playerUnits[i].attack, 65 + i * 90, 190);
+        context.fillText("def:" + playerUnits[i].defense, 65 + i * 90, 210);
+        context.fillText("spe:" + playerUnits[i].speed, 65 + i * 90, 230);
+        for (let j = 0; j < 50; j++)
+          context.fillRect(40 + i * 90 + j, 240, 1, 3);
+        context.fillStyle = "blue";
+        for (let j = 0; j < playerUnits[i].exp; j += 2)
+          context.fillRect(40 + i * 90 + j / 2, 240, 1, 3);
+      }
     }
 
 
@@ -834,6 +861,7 @@ function loop() {
     if (death == playerUnits.length)
       end = true;
   } else {
+    context.fillStyle = "black";
     context.font = "30px Arial";
     context.fillText("money : " + inventory.money, canvas.width / 2, 30);
     context.fillText("obj1 : " + inventory.obj1, canvas.width / 2, 60);
@@ -1015,7 +1043,7 @@ document.addEventListener('click', function(e) {
           selected = -1;
         }
 
-      } else if (grid[Math.floor(relativeY / 32) * 10 + Math.floor(relativeX / 32)].highlight != 0 && startFight(map.p[playerUnits[selected].binding], Math.floor(relativeX / 32), Math.floor(relativeY / 32), playerUnits[selected].range, 0)) {
+      } else if (!playerUnits[selected].wait && grid[Math.floor(relativeY / 32) * 10 + Math.floor(relativeX / 32)].highlight != 0 && startFight(map.p[playerUnits[selected].binding], Math.floor(relativeX / 32), Math.floor(relativeY / 32), playerUnits[selected].range, 0)) {
         fight(playerUnits[selected], enemyUnits[enemyOnClick]);
         if (enemyOnClick == 1 && enemyUnits[1].hp < 1)
           addObject();
