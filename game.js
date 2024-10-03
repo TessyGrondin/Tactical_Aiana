@@ -1056,8 +1056,11 @@ document.addEventListener('click', function(e) {
 document.addEventListener('mousedown', function(e) {
   let relativeX = e.x - canvas.offsetLeft;
   let relativeY = e.y - canvas.offsetTop;
+  let unitOnClick = findUnit({y:Math.floor(relativeY / 32), x:Math.floor(relativeX / 32)});
 
-  if (selected == -1 && !activMenu) {
+  if (phase != 0)
+    return;
+  if (unitOnClick == -1 && selected == -1 && !activMenu) {
     activMenu = true;
     return;
   }
