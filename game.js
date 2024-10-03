@@ -101,7 +101,6 @@ let premadeMaps = [
 
 
 
-
 let inventory = {money:0, obj1:0, obj2:0, obj3:0, potion:2};
 
 function usePotion(unit) {
@@ -110,6 +109,21 @@ function usePotion(unit) {
     unit.hp = (unit.hp + 3 <= unit.maxhp) ? unit.hp + 3 : unit.maxhp;
     inventory.potion--;
 }
+
+
+
+
+
+
+
+
+
+//menu
+let cross = new Image();
+cross.src = "cross.png";
+let shadow = new Image();
+shadow.src = "shadow.png";
+let activMenu = false;
 
 
 
@@ -732,6 +746,15 @@ function loop() {
 
 
 
+    if (activMenu) {
+      context.drawImage(shadow, 0, 0, shadow.width, shadow.height, 0, 0, canvas.width, canvas.height);
+    }
+
+
+
+
+
+
 
     if (phase == 0) {
       let count = 0;
@@ -967,58 +990,81 @@ document.addEventListener('click', function(e) {
     let unitOnClick = findUnit({y:Math.floor(relativeY / 32), x:Math.floor(relativeX / 32)});
     let enemyOnClick = findEnemy({y:Math.floor(relativeY / 32), x:Math.floor(relativeX / 32)});
 
-    if (playerCanHeal(unitOnClick)) {
-      heal(playerUnits[selected], playerUnits[unitOnClick]);
-      for (let i = 0 ; i < grid.length; i++)
-        grid[i].highlight = 0;
-      playerUnits[selected].wait = true;
-      selected = -1
-      dangerZone();
+
+
+
+
+
+
+
+
+
+    if (selected == -1) {
+      activMenu = true;
       return;
     }
-    if (grid[Math.floor(relativeY / 32) * 10 + Math.floor(relativeX / 32)].highlight == 0 || (unitOnClick != -1 && unitOnClick != selected)) {
-      for (let i = 0 ; i < grid.length; i++)
-        grid[i].highlight = 0;
-      if (selected != -1) {
-        map.p[playerUnits[selected].binding].x = lastPosition.x;
-        map.p[playerUnits[selected].binding].y = lastPosition.y;
-        selected = -1;
-      }
 
-    } else if (grid[Math.floor(relativeY / 32) * 10 + Math.floor(relativeX / 32)].highlight != 0 && startFight(map.p[playerUnits[selected].binding], Math.floor(relativeX / 32), Math.floor(relativeY / 32), playerUnits[selected].range, 0)) {
-      fight(playerUnits[selected], enemyUnits[enemyOnClick]);
-      if (enemyOnClick == 1 && enemyUnits[1].hp < 1)
-        addObject();
-      playerUnits[selected].wait = true;
-      selected = -1;
-      for (let i = 0 ; i < grid.length; i++)
-        grid[i].highlight = 0;
-      dangerZone();
-      return;
 
-    } else if (selected != -1 && grid[Math.floor(relativeY / 32) * 10 + Math.floor(relativeX / 32)].highlight == 1 && !playerUnits[selected].wait) {
-      if (selected == unitOnClick) {
-        playerUnits[selected].wait = true;
-        selected = -1;
-        dangerZone();
+
+
+
+
+
+
+    if (!activMenu) {
+      if (playerCanHeal(unitOnClick)) {
+        heal(playerUnits[selected], playerUnits[unitOnClick]);
         for (let i = 0 ; i < grid.length; i++)
           grid[i].highlight = 0;
+        playerUnits[selected].wait = true;
+        selected = -1
+        dangerZone();
         return;
       }
-      map.p[playerUnits[selected].binding].x = Math.floor(relativeX / 32);
-      map.p[playerUnits[selected].binding].y = Math.floor(relativeY / 32);
-      return;
-    }
-    map.p.forEach(function(pos) {
-      if (relativeX >= pos.x * 32 && relativeX < (pos.x + 1) * 32 && relativeY >= pos.y * 32 && relativeY < (pos.y + 1) * 32) {
-        selected = findUnit(pos);
+      if (grid[Math.floor(relativeY / 32) * 10 + Math.floor(relativeX / 32)].highlight == 0 || (unitOnClick != -1 && unitOnClick != selected)) {
+        for (let i = 0 ; i < grid.length; i++)
+          grid[i].highlight = 0;
         if (selected != -1) {
-          lastPosition.x = pos.x;
-          lastPosition.y = pos.y;
-          fillPlayer(pos, playerUnits[selected].movement, playerUnits[selected].range);
+          map.p[playerUnits[selected].binding].x = lastPosition.x;
+          map.p[playerUnits[selected].binding].y = lastPosition.y;
+          selected = -1;
         }
+
+      } else if (grid[Math.floor(relativeY / 32) * 10 + Math.floor(relativeX / 32)].highlight != 0 && startFight(map.p[playerUnits[selected].binding], Math.floor(relativeX / 32), Math.floor(relativeY / 32), playerUnits[selected].range, 0)) {
+        fight(playerUnits[selected], enemyUnits[enemyOnClick]);
+        if (enemyOnClick == 1 && enemyUnits[1].hp < 1)
+          addObject();
+        playerUnits[selected].wait = true;
+        selected = -1;
+        for (let i = 0 ; i < grid.length; i++)
+          grid[i].highlight = 0;
+        dangerZone();
+        return;
+
+      } else if (selected != -1 && grid[Math.floor(relativeY / 32) * 10 + Math.floor(relativeX / 32)].highlight == 1 && !playerUnits[selected].wait) {
+        if (selected == unitOnClick) {
+          playerUnits[selected].wait = true;
+          selected = -1;
+          dangerZone();
+          for (let i = 0 ; i < grid.length; i++)
+            grid[i].highlight = 0;
+          return;
+        }
+        map.p[playerUnits[selected].binding].x = Math.floor(relativeX / 32);
+        map.p[playerUnits[selected].binding].y = Math.floor(relativeY / 32);
+        return;
       }
-    });
+      map.p.forEach(function(pos) {
+        if (relativeX >= pos.x * 32 && relativeX < (pos.x + 1) * 32 && relativeY >= pos.y * 32 && relativeY < (pos.y + 1) * 32) {
+          selected = findUnit(pos);
+          if (selected != -1) {
+            lastPosition.x = pos.x;
+            lastPosition.y = pos.y;
+            fillPlayer(pos, playerUnits[selected].movement, playerUnits[selected].range);
+          }
+        }
+      });
+    }
   }
 });
 
