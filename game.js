@@ -750,6 +750,10 @@ function loop() {
     if (activMenu) {
       context.drawImage(shadow, 0, 0, shadow.width, shadow.height, 0, 0, canvas.width, canvas.height);
       context.drawImage(cross, crossFrame * cross.width / 2, 0, cross.width / 2, cross.height, canvas.width - cross.width / 2, 0, cross.width / 2, cross.height);
+      context.drawImage(tileImage, 14 * 32, 0, 32, 32, 0, 0, 64, 64);
+      context.fillStyle = "white";
+      context.font = "30px Arial";
+      context.fillText("x " + inventory.potion, 84, 50);
     }
 
 
