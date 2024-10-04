@@ -101,7 +101,7 @@ let premadeMaps = [
 
 
 
-let inventory = {money:0, obj1:0, obj2:0, obj3:0, potion:2};
+let inventory = {money:0, obj1:0, obj2:0, obj3:0, potion:0};
 
 function usePotion(unit) {
     if (unit.hp == unit.maxhp || inventory.potion < 1)
@@ -170,10 +170,10 @@ class Unit {
   levelUp() {
     if (this.exp < 100)
       return;
-    this.attack += Math.floor(Math.random() * 2);
-    this.defense += Math.floor(Math.random() * 2);
-    this.speed += Math.floor(Math.random() * 2);
-    this.maxhp += Math.floor(Math.random() * 5);
+    this.attack += Math.floor(Math.random() * 2) + 1;
+    this.defense += Math.floor(Math.random() * 2) + 1;
+    this.speed += Math.floor(Math.random() * 2) + 1;
+    this.maxhp += Math.floor(Math.random() * 5) + 1;
     this.exp -= 100;
   }
 }
@@ -271,7 +271,7 @@ function findEnemy(pos) {
 
 let phase = 0;
 let enemyToMove = 2;
-let mapNumber = 1;
+let mapNumber = 0;
 
 
 
@@ -684,6 +684,14 @@ function generateNewMap() {
       playerUnits[i].wait = false;
     }
   }
+  let newPotion = 2;
+  for (let i = 0; i < playerUnits.length; i++) {
+    if (playerUnits[i].type == 2 && playerUnits[i].hp > 0) {
+      newPotion = 1;
+      break;
+    }
+  }
+  inventory.potion += newPotion;
   dangerZone();
 }
 
@@ -1097,19 +1105,35 @@ document.addEventListener('mousedown', function(e) {
     activMenu = true;
     return;
   }
-  if (relativeX < canvas.width - cross.width / 2 || relativeX > canvas.width - cross.width / 2 + cross.width / 2 || relativeY < 0 || relativeY > cross.height)
+  if (relativeX > canvas.width - cross.width / 2 && relativeX < canvas.width && relativeY > 0 && relativeY < cross.height) {
+    crossFrame = 1;
     return;
-  crossFrame = 1;
+  }
+  for (let i = 0; i < 3; i++) {
+    if (relativeX >= healButtons[i].x && relativeX < healButtons[i].x + healImage.width / 2 && relativeY >= healButtons[i].y && relativeY < healButtons[i].y + healImage.height) {
+      healButtons[i].frame = 1;
+      return;
+    }
+  }
 });
 
 document.addEventListener('mouseup', function(e) {
   let relativeX = e.x - canvas.offsetLeft;
   let relativeY = e.y - canvas.offsetTop;
 
-  if (relativeX < canvas.width - cross.width / 2 || relativeX > canvas.width - cross.width / 2 + cross.width / 2 || relativeY < 0 || relativeY > cross.height)
-    return;
   crossFrame = 0;
-  activMenu = false;
+  for (let i = 0; i < 3; i++)
+    healButtons[i].frame = 0;
+  if (relativeX >= canvas.width - cross.width / 2 && relativeX < canvas.width && relativeY >= 0 && relativeY < cross.height) {
+    activMenu = false;
+    return;
+  }
+  for (let i = 0; i < 3; i++) {
+    if (relativeX >= healButtons[i].x && relativeX < healButtons[i].x + healImage.width / 2 && relativeY >= healButtons[i].y && relativeY < healButtons[i].y + healImage.height) {
+      usePotion(playerUnits[i]);
+      return;
+    }
+  }
 });
 
 
