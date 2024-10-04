@@ -125,6 +125,9 @@ let crossFrame = 0;
 let shadow = new Image();
 shadow.src = "shadow.png";
 let activMenu = false;
+let healImage = new Image();
+healImage.src = "heal.png";
+let healButtons = [{x:35, y:250, frame:0}, {x:125, y:250, frame:0}, {x:215, y:250, frame:0}];
 
 
 
@@ -780,6 +783,8 @@ function loop() {
         context.fillStyle = "blue";
         for (let j = 0; j < playerUnits[i].exp; j += 2)
           context.fillRect(40 + i * 90 + j / 2, 240, 1, 3);
+        if (playerUnits[i].hp != playerUnits[i].maxhp)
+          context.drawImage(healImage, healButtons[i].frame * healImage.width / 2, 0, healImage.width / 2, healImage.height, healButtons[i].x, healButtons[i].y, healImage.width / 2, healImage.height);
       }
     }
 
