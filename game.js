@@ -521,7 +521,7 @@ function createList(unit) {
   let t = [];
   for (let i = 0; i < playerUnits.length; i++) {
     t.push([]);
-    t[i].push(getDistance(map.e[unit.binding], map.p[playerUnits[i].binding]));
+    t[i].push(Math.abs(unit.range - getDistance(map.e[unit.binding], map.p[playerUnits[i].binding])));
     t[i].push(playerUnits[i].hp);
     t[i].push(playerUnits[i].defense);
     t[i].push(playerUnits[i].attack);
@@ -613,28 +613,28 @@ function chooseTarget(unit) {
   let s = map.p[playerUnits[ref].binding];
   let dest = map.e[unit.binding];
   let dist = getDistance(s, dest);
-  let goal = {x:0, y:0};
-  for (let i = 0; i < unit.range + 1; i++) {
+  let goal = {x:s.x, y:s.y};
+  for (let i = unit.range; i > 0; i--) {
     let j = unit.range - i;
-    if (getDistance({x:s.x + j, y:s.y + i}, dest) < dist) {
+    if (Math.abs(unit.range - getDistance({x:s.x + j, y:s.y + i}, dest)) < dist) {
       goal.x = s.x + j;
       goal.y = s.y + i;
-      dist = getDistance({x:s.x + j, y:s.y + i}, dest);
+      dist = Math.abs(unit.range - getDistance({x:s.x + j, y:s.y + i}, dest));
     }
-    if (getDistance({x:s.x - j, y:s.y + i}, dest) < dist) {
+    if (Math.abs(unit.range - getDistance({x:s.x - j, y:s.y + i}, dest)) < dist) {
       goal.x = s.x - j;
       goal.y = s.y + i;
-      dist = getDistance({x:s.x - j, y:s.y + i}, dest);
+      dist = Math.abs(unit.range - getDistance({x:s.x - j, y:s.y + i}, dest));
     }
-    if (getDistance({x:s.x + j, y:s.y - i}, dest) < dist) {
+    if (Math.abs(unit.range - getDistance({x:s.x + j, y:s.y - i}, dest)) < dist) {
       goal.x = s.x + j;
       goal.y = s.y - i;
-      dist = getDistance({x:s.x + j, y:s.y - i}, dest);
+      dist = Math.abs(unit.range - getDistance({x:s.x + j, y:s.y - i}, dest));
     }
-    if (getDistance({x:s.x - j, y:s.y - i}, dest) < dist) {
+    if (Math.abs(unit.range - getDistance({x:s.x - j, y:s.y - i}, dest)) < dist) {
       goal.x = s.x - j;
       goal.y = s.y - i;
-      dist = getDistance({x:s.x - j, y:s.y - i}, dest);
+      dist = Math.abs(unit.range - getDistance({x:s.x - j, y:s.y - i}, dest));
     }
   }
   goToSpot(unit, map.e[unit.binding], goal);
@@ -766,8 +766,6 @@ function loop() {
         context.fillRect(grid[coordinate(map.e[enemyUnits[i].binding].x, map.e[enemyUnits[i].binding].y)].x + j, grid[coordinate(map.e[enemyUnits[i].binding].x, map.e[enemyUnits[i].binding].y)].y + 30, 1, 2);
       context.fillStyle = "white";
     }
-    // context.fillStyle = "black";
-    // context.fillText(test, canvas.width / 2, 50);
 
 
 
@@ -1126,6 +1124,8 @@ document.addEventListener('mouseup', function(e) {
   let relativeX = e.x - canvas.offsetLeft;
   let relativeY = e.y - canvas.offsetTop;
 
+  if (!activMenu)
+    return;
   crossFrame = 0;
   for (let i = 0; i < 3; i++)
     healButtons[i].frame = 0;
