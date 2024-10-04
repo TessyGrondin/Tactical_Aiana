@@ -118,7 +118,6 @@ function usePotion(unit) {
 
 
 
-//menu
 let cross = new Image();
 cross.src = "cross.png";
 let crossFrame = 0;
@@ -658,11 +657,11 @@ function generateNewMap() {
   let select = Math.floor(Math.random() * premadeMaps.length);
   thief = new Unit(0, 1);
   boss = new Unit(Math.floor(Math.random() * 2), 0);
-  boss.attack += 3;
-  boss.defense += 3;
-  boss.maxhp += 3;
-  boss.hp += 3;
-  boss.speed += 3;
+  boss.attack += 3 + 2 * mapNumber;
+  boss.defense += 3 + 2 * mapNumber;
+  boss.maxhp += 3 + 2 * mapNumber;
+  boss.hp += 3 + 2 * mapNumber;
+  boss.speed += 3 + 2 * mapNumber;
   boss.movement = 0;
   thief.range = 0;
   enemyUnits = [];
@@ -676,8 +675,14 @@ function generateNewMap() {
   for (let i = 0; i < premadeMaps[select].p.length; i++)
     map.p.push({x:premadeMaps[select].p[i].x, y:premadeMaps[select].p[i].y});
   map.exit = {x:premadeMaps[select].exit.x, y:premadeMaps[select].exit.y};
-  for (let i = 2; i < map.e.length; i++)
+  for (let i = 2; i < map.e.length; i++) {
     enemyUnits.push(new Unit(Math.floor(Math.random() * 3), i));
+    enemyUnits[i].attack += 2 * mapNumber;
+    enemyUnits[i].defense += 2 * mapNumber;
+    enemyUnits[i].speed += 2 * mapNumber;
+    enemyUnits[i].maxhp += 2 * mapNumber;
+    enemyUnits[i].hp = enemyUnits[i].maxhp;
+  }
   for (let i = 0; i < playerUnits.length; i++) {
     if (playerUnits[i].hp > 0) {
       playerUnits[i].hp = playerUnits[i].maxhp;
@@ -978,17 +983,16 @@ function playerCanHeal(onClick) {
 }
 
 function addObject() {
-    let oType = Math.floor(Math.random() * 4);
+  let oType = Math.floor(Math.random() * 4);
 
-    if (oType == 0)
-        inventory.money += 50;
-    else if (oType == 1)
-        inventory.obj1++;
-    else if (oType == 2)
-        inventory.obj2++;
-    else
-        inventory.obj3++;
-    console.log(oType);
+  if (oType == 0)
+    inventory.money += 50;
+  else if (oType == 1)
+    inventory.obj1++;
+  else if (oType == 2)
+    inventory.obj2++;
+  else
+    inventory.obj3++;
 }
 
 document.addEventListener('click', function(e) {
@@ -1014,6 +1018,7 @@ document.addEventListener('click', function(e) {
     end = false;
     mapNumber = 0;
     playerUnits = [];
+    inventory = {money:0, obj1:0, obj2:0, obj3:0, potion:0};
     for (let i = 0; i < 3; i++) {
       playerUnits.push(new Unit(Math.floor(Math.random() * 3), i));
       playerUnits[i].attack += 2;
