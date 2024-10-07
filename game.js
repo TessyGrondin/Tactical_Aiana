@@ -702,6 +702,19 @@ function generateNewMap() {
 
 generateNewMap();
 
+function drawHp(max, x, y) {
+  let width = 0;
+  let height = 0;
+  for (let i = 0; i < max; i++) {
+    if (width > 32) {
+      width = 0;
+      height += 2;
+    }
+    context.fillRect(x + width, y + 30 - height, 1, 2);
+    width++;
+  }
+}
+
 function loop() {
   requestAnimationFrame(loop);
   context.clearRect(0,0,canvas.width,canvas.height);
@@ -739,19 +752,9 @@ function loop() {
       context.drawImage(tileImage, (11 + playerUnits[i].type) * 32, 0, 32, 32, grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].x, grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].y, 32, 32);
       if (playerUnits[i].wait)
         context.drawImage(tileImage, 10 * 32, 0, 32, 32, grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].x, grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].y, 32, 32);
-      for (let j = 0; j < playerUnits[i].maxhp; j++) {
-        if (j < 32)
-          context.fillRect(grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].x + j, grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].y + 30, 1, 2);
-        else
-          context.fillRect(grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].x + j - 32, grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].y + 28, 1, 2);
-      }
+      drawHp(playerUnits[i].maxhp, grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].x, grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].y);
       context.fillStyle = "blue";
-      for (let j = 0; j < playerUnits[i].hp; j++) {
-        if (j < 32)
-          context.fillRect(grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].x + j, grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].y + 30, 1, 2);
-        else
-          context.fillRect(grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].x + j - 32, grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].y + 28, 1, 2);
-      }
+      drawHp(playerUnits[i].hp, grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].x, grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].y);
       context.fillStyle = "white";
     }
     for (let i = 0; i < enemyUnits.length; i++) {
@@ -759,11 +762,9 @@ function loop() {
         continue;
       if (i != 1)
         context.drawImage(tileImage, (11 + enemyUnits[i].type) * 32, 0, 32, 32, grid[coordinate(map.e[enemyUnits[i].binding].x, map.e[enemyUnits[i].binding].y)].x, grid[coordinate(map.e[enemyUnits[i].binding].x, map.e[enemyUnits[i].binding].y)].y, 32, 32);
-      for (let j = 0; j < enemyUnits[i].maxhp; j++)
-        context.fillRect(grid[coordinate(map.e[enemyUnits[i].binding].x, map.e[enemyUnits[i].binding].y)].x + j, grid[coordinate(map.e[enemyUnits[i].binding].x, map.e[enemyUnits[i].binding].y)].y + 30, 1, 2);
+      drawHp(enemyUnits[i].maxhp, grid[coordinate(map.e[enemyUnits[i].binding].x, map.e[enemyUnits[i].binding].y)].x, grid[coordinate(map.e[enemyUnits[i].binding].x, map.e[enemyUnits[i].binding].y)].y);
       context.fillStyle = "red";
-      for (let j = 0; j < enemyUnits[i].hp; j++)
-        context.fillRect(grid[coordinate(map.e[enemyUnits[i].binding].x, map.e[enemyUnits[i].binding].y)].x + j, grid[coordinate(map.e[enemyUnits[i].binding].x, map.e[enemyUnits[i].binding].y)].y + 30, 1, 2);
+      drawHp(enemyUnits[i].hp, grid[coordinate(map.e[enemyUnits[i].binding].x, map.e[enemyUnits[i].binding].y)].x, grid[coordinate(map.e[enemyUnits[i].binding].x, map.e[enemyUnits[i].binding].y)].y);
       context.fillStyle = "white";
     }
 
