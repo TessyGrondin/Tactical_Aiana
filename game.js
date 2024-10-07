@@ -56,9 +56,37 @@ function groupDefense(unit, pos) {
   }
 }
 
+function crossDefense(unit, Upos, foes, pos) {
+  if (!talentPresent(unit, "cross defense"))
+    return;
+  for (let i = 0; i < foes.length; i++) {
+    if (pos[i].x == Upos.x || pos[i].y == Upos.y)
+      foes[i].defense[1] -= 2;
+  }
+}
+
+function crossAttack(unit, Upos, foes, pos) {
+  if (!talentPresent(unit, "cross attack"))
+    return;
+  for (let i = 0; i < foes.length; i++) {
+    if (pos[i].x == Upos.x || pos[i].y == Upos.y)
+      foes[i].attack[1] -= 2;
+  }
+}
+
 function addTalent(unit, index) {
   unit.ability.push({name:talents[index].name, description:talents[index].description});
 }
+
+
+
+
+
+
+
+
+
+
 
 let premadeMaps = [
   {
@@ -835,12 +863,24 @@ function loop() {
 
 
 
+    for (let i = 0; i < playerUnits.length; i++) {
+      playerUnits.attack[1] = 0;
+      playerUnits.defense[1] = 0;
+    }
+    for (let i = 0; i < enemyUnits.length; i++) {
+      enemyUnits.attack[1] = 0;
+      enemyUnits.defense[1] = 0;
+    }
     for (let i = 0; i < playerUnits.length; i++)
       groupAttack(playerUnits[i], map.p);
     groupAttack(enemyUnits[0], map.e);
     for (let i = 0; i < playerUnits.length; i++)
       groupDefense(playerUnits[i], map.p);
     groupDefense(enemyUnits[0], map.e);
+    for (let i = 0; i < playerUnits.length; i++)
+      crossAttack(playerUnits[i], map.p[playerUnits[i].binding], enemyUnits, map.e);
+    for (let i = 0; i < playerUnits.length; i++)
+      crossDefense(playerUnits[i], map.p[playerUnits[i].binding], enemyUnits, map.e);
 
 
 
