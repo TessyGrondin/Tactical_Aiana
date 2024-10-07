@@ -32,6 +32,30 @@ function talentPresent(unit, talent) {
   return false;
 }
 
+function groupAttack(unit, pos) {
+  if (!talentPresent(unit, "group attack"))
+    return;
+  unit.attack[1] = 0;
+  for (let i = 0; i < pos.length; i++) {
+    if (unit.binding == i)
+      continue;
+    if (getDistance(pos[unit.binding], pos[i]) < 3)
+      unit.attack[1] += 2;
+  }
+}
+
+function groupDefense(unit, pos) {
+  if (!talentPresent(unit, "group defense"))
+    return;
+  unit.defense[1] = 0;
+  for (let i = 0; i < pos.length; i++) {
+    if (unit.binding == i)
+      continue;
+    if (getDistance(pos[unit.binding], pos[i]) < 3)
+      unit.defense[1] += 2;
+  }
+}
+
 function addTalent(unit, index) {
   unit.ability.push({name:talents[index].name, description:talents[index].description});
 }
@@ -209,7 +233,14 @@ class Unit {
 }
 
 let playerUnits = [];
-for (let i = 1; i < 3; i++) {
+// playerUnits.push(new Unit(0, 0));
+// playerUnits[0].attack[0] += 2;
+// playerUnits[0].defense[0] += 2;
+// playerUnits[0].maxhp += 2;
+// playerUnits[0].hp += 2;
+// playerUnits[0].speed += 2;
+// addTalent(playerUnits[0], 3);
+for (let i = 0; i < 3; i++) {
   playerUnits.push(new Unit(Math.floor(Math.random() * 3), i));
   playerUnits[i].attack[0] += 2;
   playerUnits[i].defense[0] += 2;
@@ -694,10 +725,6 @@ function generateNewMap() {
   boss.hp += 3 + 2 * mapNumber;
   boss.speed += 3 + 2 * mapNumber;
   boss.movement = 0;
-  // if (boss.type == 0)
-  //   addTalent(boss, 0);
-  // else
-  //   addTalent(boss, 5);
   thief.range = 0;
   enemyUnits = [];
   enemyUnits.push(boss);
@@ -803,6 +830,17 @@ function loop() {
       context.fillStyle = "white";
     }
 
+
+
+
+
+
+    for (let i = 0; i < playerUnits.length; i++)
+      groupAttack(playerUnits[i], map.p);
+    groupAttack(enemyUnits[0], map.e);
+    for (let i = 0; i < playerUnits.length; i++)
+      groupDefense(playerUnits[i], map.p);
+    groupDefense(enemyUnits[0], map.e);
 
 
 
