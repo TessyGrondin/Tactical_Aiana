@@ -967,7 +967,7 @@ function fight(unitA, unitB) {
       playerUnits[i].levelUp();
     return;
   }
-  if (unitA.speed > unitB.speed + 3)
+  if ((unitA.speed > unitB.speed + 3 && !talentPresent(unitB, "antidouble")) || talentPresent(unitA, "guaranteed double"))
     unitB.hp -= damageA;
   if (unitB.hp <= 0) {
     unitA.exp += 75;
