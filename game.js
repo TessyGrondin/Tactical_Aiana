@@ -188,8 +188,8 @@ class Unit {
     this.movement = archetypes[type].movement;
     this.maxhp = statsRange(archetypes[type].maxhp);
     this.hp = this.maxhp;
-    this.attack = statsRange(archetypes[type].attack);
-    this.defense = statsRange(archetypes[type].defense);
+    this.attack = [statsRange(archetypes[type].attack), 0];
+    this.defense = [statsRange(archetypes[type].defense), 0];
     this.speed = statsRange(archetypes[type].speed);
     this.exp = 0;
     this.ability = [];
@@ -200,8 +200,8 @@ class Unit {
   levelUp() {
     if (this.exp < 100)
       return;
-    this.attack += Math.floor(Math.random() * 2) + 1;
-    this.defense += Math.floor(Math.random() * 2) + 1;
+    this.attack[0] += Math.floor(Math.random() * 2) + 1;
+    this.defense[0] += Math.floor(Math.random() * 2) + 1;
     this.speed += Math.floor(Math.random() * 2) + 1;
     this.maxhp += Math.floor(Math.random() * 5) + 1;
     this.exp -= 100;
@@ -209,10 +209,10 @@ class Unit {
 }
 
 let playerUnits = [];
-for (let i = 0; i < 3; i++) {
+for (let i = 1; i < 3; i++) {
   playerUnits.push(new Unit(Math.floor(Math.random() * 3), i));
-  playerUnits[i].attack += 2;
-  playerUnits[i].defense += 2;
+  playerUnits[i].attack[0] += 2;
+  playerUnits[i].defense[0] += 2;
   playerUnits[i].maxhp += 2;
   playerUnits[i].hp += 2;
   playerUnits[i].speed += 2;
@@ -688,8 +688,8 @@ function generateNewMap() {
   let select = Math.floor(Math.random() * premadeMaps.length);
   thief = new Unit(0, 1);
   boss = new Unit(Math.floor(Math.random() * 2), 0);
-  boss.attack += 3 + 2 * mapNumber;
-  boss.defense += 3 + 2 * mapNumber;
+  boss.attack[0] += 3 + 2 * mapNumber;
+  boss.defense[0] += 3 + 2 * mapNumber;
   boss.maxhp += 3 + 2 * mapNumber;
   boss.hp += 3 + 2 * mapNumber;
   boss.speed += 3 + 2 * mapNumber;
@@ -712,8 +712,8 @@ function generateNewMap() {
   map.exit = {x:premadeMaps[select].exit.x, y:premadeMaps[select].exit.y};
   for (let i = 2; i < map.e.length; i++) {
     enemyUnits.push(new Unit(Math.floor(Math.random() * 3), i));
-    enemyUnits[i].attack += 2 * mapNumber;
-    enemyUnits[i].defense += 2 * mapNumber;
+    enemyUnits[i].attack[0] += 2 * mapNumber;
+    enemyUnits[i].defense[0] += 2 * mapNumber;
     enemyUnits[i].speed += 2 * mapNumber;
     enemyUnits[i].maxhp += 2 * mapNumber;
     enemyUnits[i].hp = enemyUnits[i].maxhp;
@@ -822,8 +822,8 @@ function loop() {
         context.fillRect(40 + i * 90, 100, 48, 48);
         context.drawImage(tileImage, (playerUnits[i].type + 11) * 32, 0, 32, 32, 40 + i * 90, 100, 48, 48);
         context.fillText(playerUnits[i].hp + "/" + playerUnits[i].maxhp, 65 + i * 90, 170);
-        context.fillText("atk:" + playerUnits[i].attack, 65 + i * 90, 190);
-        context.fillText("def:" + playerUnits[i].defense, 65 + i * 90, 210);
+        context.fillText("atk:" + (playerUnits[i].attack[0] + playerUnits[i].attack[1]), 65 + i * 90, 190);
+        context.fillText("def:" + (playerUnits[i].defense[0] + playerUnits[i].defense[1]), 65 + i * 90, 210);
         context.fillText("spe:" + playerUnits[i].speed, 65 + i * 90, 230);
         for (let j = 0; j < 50; j++)
           context.fillRect(40 + i * 90 + j, 240, 1, 3);
@@ -934,7 +934,7 @@ function loop() {
 function heal(unitA, unitB) {
   if (unitA.hp < 1 || unitB.hp < 1)
     return;
-  unitB.hp += unitA.attack + 2;
+  unitB.hp += unitA.attack[0] + 2;
   if (unitB.hp > unitB.maxhp)
     unitB.hp = unitB.maxhp;
   unitA.exp += 10;
@@ -942,19 +942,25 @@ function heal(unitA, unitB) {
     playerUnits[i].levelUp();
 }
 
+function addExp(unitA, unitB, expA, expB) {
+  unitA.exp += expA;
+  unitB.exp += expB;
+  for (let i = 0; i < playerUnits.length; i++)
+    playerUnits[i].levelUp();
+}
+
 function fight(unitA, unitB) {
   if (unitA.hp < 1 || unitB.hp < 1)
     return;
-  let damageA = unitA.attack - unitB.defense;
-  damageA = (damageA < 1) ? 1 : damageA;
-  let damageB = unitB.attack - unitA.defense;
+  let damageA = (unitA.attack[0] + unitA.attack[1]) - (unitB.defense[0] + unitB.defense[1]);
+  damageA = (talentPresent(unitA, "half-measure")) ? Math.floor(unitB.hp / 2) : damageA;
+  damageA = (damageA < 1 && !talentPresent(unitA, "half-measure")) ? 1 : damageA;
+  let damageB = (unitB.attack[0] + unitB.attack[1]) - (unitA.defense[0] + unitA.defense[1]);
   damageB = (damageB < 1) ? 1 : damageB;
 
   unitB.hp -= damageA;
   if (unitB.hp <= 0) {
-    unitA.exp += 75;
-    for (let i = 0; i < playerUnits.length; i++)
-      playerUnits[i].levelUp();
+    addExp(unitA, unitB, 50, 0);
     return;
   }
   let rB = unitB.range;
@@ -962,23 +968,17 @@ function fight(unitA, unitB) {
   if (unitA.range == rB || talentPresent(unitB, "distant counter") || talentPresent(unitB, "close counter"))
     unitA.hp -= damageB;
   if (unitA.hp <= 0) {
-    unitB.exp += 75;
-    for (let i = 0; i < playerUnits.length; i++)
-      playerUnits[i].levelUp();
+    addExp(unitA, unitB, 0, 50);
     return;
   }
+  damageA = (talentPresent(unitA, "half-measure")) ? Math.floor(unitB.hp / 2) : damageA;
   if ((unitA.speed > unitB.speed + 3 && !talentPresent(unitB, "antidouble")) || talentPresent(unitA, "guaranteed double"))
     unitB.hp -= damageA;
   if (unitB.hp <= 0) {
-    unitA.exp += 75;
-    for (let i = 0; i < playerUnits.length; i++)
-      playerUnits[i].levelUp();
+    addExp(unitA, unitB, 50, 0);
     return;
   }
-  unitA.exp += 10;
-  unitB.exp += 10;
-  for (let i = 0; i < playerUnits.length; i++)
-    playerUnits[i].levelUp();
+  addExp(unitA, unitB, 10, 10);
 }
 
 function startFight(pos, cx, cy, r, align) {
