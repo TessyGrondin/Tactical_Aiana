@@ -261,14 +261,14 @@ class Unit {
 }
 
 let playerUnits = [];
-// playerUnits.push(new Unit(0, 0));
-// playerUnits[0].attack[0] += 2;
-// playerUnits[0].defense[0] += 2;
-// playerUnits[0].maxhp += 2;
-// playerUnits[0].hp += 2;
-// playerUnits[0].speed += 2;
-// addTalent(playerUnits[0], 3);
-for (let i = 0; i < 3; i++) {
+playerUnits.push(new Unit(2, 0));
+playerUnits[0].attack[0] += 2;
+playerUnits[0].defense[0] += 2;
+playerUnits[0].maxhp += 2;
+playerUnits[0].hp += 2;
+playerUnits[0].speed += 2;
+addTalent(playerUnits[0], 10);
+for (let i = 1; i < 3; i++) {
   playerUnits.push(new Unit(Math.floor(Math.random() * 3), i));
   playerUnits[i].attack[0] += 2;
   playerUnits[i].defense[0] += 2;
@@ -864,12 +864,12 @@ function loop() {
 
 
     for (let i = 0; i < playerUnits.length; i++) {
-      playerUnits.attack[1] = 0;
-      playerUnits.defense[1] = 0;
+      playerUnits[i].attack[1] = 0;
+      playerUnits[i].defense[1] = 0;
     }
     for (let i = 0; i < enemyUnits.length; i++) {
-      enemyUnits.attack[1] = 0;
-      enemyUnits.defense[1] = 0;
+      enemyUnits[i].attack[1] = 0;
+      enemyUnits[i].defense[1] = 0;
     }
     for (let i = 0; i < playerUnits.length; i++)
       groupAttack(playerUnits[i], map.p);
@@ -929,6 +929,7 @@ function loop() {
           if (enemyUnits[i].hp > 0)
             enemyUnits[i].wait = false;
         phase = 1;
+        console.log("bye bye");
       }
     } else if (phase == 1) {
       let go = true;
@@ -1089,7 +1090,10 @@ function playerCanHeal(onClick) {
     return false;
   if (onClick == selected || onClick == -1)
     return false;
-  if (getDistance(map.p[playerUnits[selected].binding], map.p[playerUnits[onClick].binding]) > 1)
+  if (playerUnits[onClick].hp == playerUnits[onClick].maxhp)
+    return;
+  let max = talentPresent(playerUnits[selected], "distant heal") ? 2 : 1;
+  if (getDistance(map.p[playerUnits[selected].binding], map.p[playerUnits[onClick].binding]) > max)
     return false;
   return true;
 }
