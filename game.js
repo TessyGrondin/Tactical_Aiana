@@ -209,7 +209,10 @@ shadow.src = "shadow.png";
 let activMenu = false;
 let healImage = new Image();
 healImage.src = "heal.png";
-let healButtons = [{x:35, y:250, frame:0}, {x:125, y:250, frame:0}, {x:215, y:250, frame:0}];
+let detailsImage = new Image();
+detailsImage.src = "details.png";
+let healButtons = [{x:35, y:290, frame:0}, {x:125, y:290, frame:0}, {x:215, y:290, frame:0}];
+let detailsButtons = [{x:35, y:250, frame:0}, {x:125, y:250, frame:0}, {x:215, y:250, frame:0}];
 
 
 
@@ -902,6 +905,7 @@ function loop() {
         context.fillStyle = "blue";
         for (let j = 0; j < playerUnits[i].exp; j += 2)
           context.fillRect(40 + i * 90 + j / 2, 240, 1, 3);
+        context.drawImage(detailsImage, detailsButtons[i].frame * detailsImage.width / 2, 0, detailsImage.width / 2, detailsImage.height, detailsButtons[i].x, detailsButtons[i].y, detailsImage.width / 2, detailsImage.height);
         if (playerUnits[i].hp != playerUnits[i].maxhp)
           context.drawImage(healImage, healButtons[i].frame * healImage.width / 2, 0, healImage.width / 2, healImage.height, healButtons[i].x, healButtons[i].y, healImage.width / 2, healImage.height);
       }
@@ -1234,6 +1238,12 @@ document.addEventListener('mousedown', function(e) {
       return;
     }
   }
+  for (let i = 0; i < 3; i++) {
+    if (relativeX >= detailsButtons[i].x && relativeX < detailsButtons[i].x + detailsImage.width / 2 && relativeY >= detailsButtons[i].y && relativeY < detailsButtons[i].y + detailsImage.height) {
+      detailsButtons[i].frame = 1;
+      return;
+    }
+  }
 });
 
 document.addEventListener('mouseup', function(e) {
@@ -1245,6 +1255,8 @@ document.addEventListener('mouseup', function(e) {
   crossFrame = 0;
   for (let i = 0; i < 3; i++)
     healButtons[i].frame = 0;
+  for (let i = 0; i < 3; i++)
+    detailsButtons[i].frame = 0;
   if (relativeX >= canvas.width - cross.width / 2 && relativeX < canvas.width && relativeY >= 0 && relativeY < cross.height) {
     activMenu = false;
     return;
