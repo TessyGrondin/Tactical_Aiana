@@ -9,20 +9,20 @@ let talents = [
   {name:"distant counter", description:"can counter at any distance"},
   {name:"antidouble", description:"ignore your spe disadvantage"},
   {name:"guaranteed double", description:"ignore foe's spe advantage"},
-  {name:"group attack", description:"add 2 to your att according to the number of allies nearby"},
-  {name:"group defense", description:"add 2 to your def according to the number of allies nearby"},
+  {name:"group attack", description:"add 2 to your att according to the\nnumber of allies nearby"},
+  {name:"group defense", description:"add 2 to your def according to the\nnumber of allies nearby"},
 
   {name:"close counter", description:"can counter at any distance"},
   {name:"antidouble", description:"ignore your spe disadvantage"},
   {name:"guaranteed double", description:"ignore foe's spe advantage"},
-  {name:"group attack", description:"add 2 to your att according to the number of allies nearby"},
-  {name:"group defense", description:"add 2 to your def according to the number of allies nearby"},
+  {name:"group attack", description:"add 2 to your att according to the\nnumber of allies nearby"},
+  {name:"group defense", description:"add 2 to your def according to the\nnumber of allies nearby"},
 
   {name:"distant heal", description:"can heal at a two tile distance"},
   {name:"half-measure", description:"cuts the foe's hp in two"},
   {name:"self-heal", description:"heal you when you heal allies"},
-  {name:"cross defense", description:"inflict def - 2 to enemies on the same line and column"},
-  {name:"cross attack", description:"inflict att - 2 to enemies on the same line and column"},
+  {name:"cross defense", description:"inflict def - 2 to enemies on the\nsame line and column"},
+  {name:"cross attack", description:"inflict att - 2 to enemies on the\nsame line and column"},
 ]
 
 function talentPresent(unit, talent) {
@@ -274,6 +274,7 @@ for (let i = 0; i < 3; i++) {
   playerUnits[i].hp += 2;
   playerUnits[i].speed += 2;
 }
+
 let enemyUnits = [];
 let boss = new Unit(Math.floor(Math.random() * 2), 0);
 let thief = new Unit(0, 1);
@@ -804,6 +805,13 @@ function drawHp(max, x, y) {
   }
 }
 
+function drawSplit(s, posx, posy, height) {
+  s = s.toString();
+  let toWrite = s.split('\n');
+  for (let i = 0; i < toWrite.length; i++)
+    context.fillText(toWrite[i], posx, posy + i * height);
+}
+
 function loop() {
   requestAnimationFrame(loop);
   context.clearRect(0,0,canvas.width,canvas.height);
@@ -898,6 +906,12 @@ function loop() {
       context.fillText("atk:" + (detailedUnit.attack[0] + detailedUnit.attack[1]), 180, 120);
       context.fillText("def:" + (detailedUnit.defense[0] + detailedUnit.defense[1]), 80, 150);
       context.fillText("spe:" + detailedUnit.speed, 180, 150);
+      let talentY = 190;
+      for (let i = 0; i < detailedUnit.ability.length; i++) {
+        context.fillText(detailedUnit.ability[i].name, 0, talentY);
+        drawSplit(detailedUnit.ability[i].description, 10, talentY + 20, 20);
+        talentY += 70;
+      }
 
 
 
