@@ -746,6 +746,7 @@ function generateNewMap() {
   boss.hp += 3 + 2 * mapNumber;
   boss.speed += 3 + 2 * mapNumber;
   boss.movement = 0;
+  addTalent(boss, Math.floor(Math.random() * 5) + boss.type * 5);
   thief.range = 0;
   enemyUnits = [];
   enemyUnits.push(boss);
