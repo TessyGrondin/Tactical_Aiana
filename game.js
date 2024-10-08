@@ -207,6 +207,8 @@ let crossFrame = 0;
 let shadow = new Image();
 shadow.src = "shadow.png";
 let activMenu = false;
+let activDetails = false;
+let detailedUnit;
 let healImage = new Image();
 healImage.src = "heal.png";
 let detailsImage = new Image();
@@ -883,8 +885,17 @@ function loop() {
 
 
 
+    if (activDetails) {
+      context.drawImage(shadow, 0, 0, shadow.width, shadow.height, 0, 0, canvas.width, canvas.height);
+      context.drawImage(cross, crossFrame * cross.width / 2, 0, cross.width / 2, cross.height, canvas.width - cross.width / 2, 0, cross.width / 2, cross.height);
 
-    if (activMenu) {
+
+
+
+
+
+
+    } else if (activMenu) {
       context.drawImage(shadow, 0, 0, shadow.width, shadow.height, 0, 0, canvas.width, canvas.height);
       context.drawImage(cross, crossFrame * cross.width / 2, 0, cross.width / 2, cross.height, canvas.width - cross.width / 2, 0, cross.width / 2, cross.height);
       context.drawImage(tileImage, 14 * 32, 0, 32, 32, 0, 0, 64, 64);
@@ -1257,6 +1268,10 @@ document.addEventListener('mouseup', function(e) {
     healButtons[i].frame = 0;
   for (let i = 0; i < 3; i++)
     detailsButtons[i].frame = 0;
+  if (activDetails && relativeX >= canvas.width - cross.width / 2 && relativeX < canvas.width && relativeY >= 0 && relativeY < cross.height) {
+    activDetails = false;
+    return;
+  }
   if (relativeX >= canvas.width - cross.width / 2 && relativeX < canvas.width && relativeY >= 0 && relativeY < cross.height) {
     activMenu = false;
     return;
@@ -1264,6 +1279,13 @@ document.addEventListener('mouseup', function(e) {
   for (let i = 0; i < 3; i++) {
     if (relativeX >= healButtons[i].x && relativeX < healButtons[i].x + healImage.width / 2 && relativeY >= healButtons[i].y && relativeY < healButtons[i].y + healImage.height) {
       usePotion(playerUnits[i]);
+      return;
+    }
+  }
+  for (let i = 0; i < 3; i++) {
+    if (relativeX >= detailsButtons[i].x && relativeX < detailsButtons[i].x + healImage.width / 2 && relativeY >= detailsButtons[i].y && relativeY < detailsButtons[i].y + healImage.height) {
+      activDetails = true;
+      detailedUnit = playerUnits[i];
       return;
     }
   }
