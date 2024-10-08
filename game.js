@@ -1265,12 +1265,12 @@ document.addEventListener('mousedown', function(e) {
     detailedUnit = enemyUnits[enemyOnClick];
     return;
   }
-  if (unitOnClick == -1 && selected == -1 && !activMenu && enemyOnClick == -1) {
-    activMenu = true;
-    return;
-  }
   if (relativeX > canvas.width - cross.width / 2 && relativeX < canvas.width && relativeY > 0 && relativeY < cross.height) {
     crossFrame = 1;
+    return;
+  }
+  if (unitOnClick == -1 && selected == -1 && !activMenu && enemyOnClick == -1) {
+    activMenu = true;
     return;
   }
   for (let i = 0; i < 3; i++) {
@@ -1291,7 +1291,7 @@ document.addEventListener('mouseup', function(e) {
   let relativeX = e.x - canvas.offsetLeft;
   let relativeY = e.y - canvas.offsetTop;
 
-  if (!activMenu)
+  if (!activMenu && !activDetails)
     return;
   crossFrame = 0;
   for (let i = 0; i < 3; i++)
