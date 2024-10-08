@@ -1256,10 +1256,16 @@ document.addEventListener('mousedown', function(e) {
   let relativeX = e.x - canvas.offsetLeft;
   let relativeY = e.y - canvas.offsetTop;
   let unitOnClick = findUnit({y:Math.floor(relativeY / 32), x:Math.floor(relativeX / 32)});
+  let enemyOnClick = findEnemy({y:Math.floor(relativeY / 32), x:Math.floor(relativeX / 32)});
 
   if (phase != 0)
     return;
-  if (unitOnClick == -1 && selected == -1 && !activMenu) {
+  if (enemyOnClick != -1 && ((selected != -1 && getDistance(map.p[selected], map.e[enemyOnClick]) != playerUnits[selected].range) || selected == -1)) {
+    activDetails = true;
+    detailedUnit = enemyUnits[enemyOnClick];
+    return;
+  }
+  if (unitOnClick == -1 && selected == -1 && !activMenu && enemyOnClick == -1) {
     activMenu = true;
     return;
   }
