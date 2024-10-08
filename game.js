@@ -6,23 +6,23 @@ context.textAlign = "center";
 context.fillStyle = 'blue';
 
 let talents = [
-  {name:"distant counter", description:"can counter at any distance", type:0},
-  {name:"antidouble", description:"ignore your spe disadvantage", type:0},
-  {name:"guaranteed double", description:"ignore foe's spe advantage", type:0},
-  {name:"group attack", description:"add 2 to your att according to the number of allies nearby", type:0},
-  {name:"group defense", description:"add 2 to your def according to the number of allies nearby", type:0},
+  {name:"distant counter", description:"can counter at any distance"},
+  {name:"antidouble", description:"ignore your spe disadvantage"},
+  {name:"guaranteed double", description:"ignore foe's spe advantage"},
+  {name:"group attack", description:"add 2 to your att according to the number of allies nearby"},
+  {name:"group defense", description:"add 2 to your def according to the number of allies nearby"},
 
-  {name:"close counter", description:"can counter at any distance", type:1},
-  {name:"antidouble", description:"ignore your spe disadvantage", type:1},
-  {name:"guaranteed double", description:"ignore foe's spe advantage", type:1},
-  {name:"group attack", description:"add 2 to your att according to the number of allies nearby", type:1},
-  {name:"group defense", description:"add 2 to your def according to the number of allies nearby", type:1},
+  {name:"close counter", description:"can counter at any distance"},
+  {name:"antidouble", description:"ignore your spe disadvantage"},
+  {name:"guaranteed double", description:"ignore foe's spe advantage"},
+  {name:"group attack", description:"add 2 to your att according to the number of allies nearby"},
+  {name:"group defense", description:"add 2 to your def according to the number of allies nearby"},
 
-  {name:"distant heal", description:"can heal at a two tile distance", type:2},
-  {name:"half-measure", description:"cuts the foe's hp in two", type:2},
-  {name:"sacrifice", description:"takes a close ally's hit in their place", type:2},
-  {name:"cross defense", description:"inflict def - 2 to enemies on the same line and column", type:2},
-  {name:"cross attack", description:"inflict att - 2 to enemies on the same line and column", type:2},
+  {name:"distant heal", description:"can heal at a two tile distance"},
+  {name:"half-measure", description:"cuts the foe's hp in two"},
+  {name:"self-heal", description:"heal you when you heal allies"},
+  {name:"cross defense", description:"inflict def - 2 to enemies on the same line and column"},
+  {name:"cross attack", description:"inflict att - 2 to enemies on the same line and column"},
 ]
 
 function talentPresent(unit, talent) {
@@ -261,14 +261,7 @@ class Unit {
 }
 
 let playerUnits = [];
-playerUnits.push(new Unit(2, 0));
-playerUnits[0].attack[0] += 2;
-playerUnits[0].defense[0] += 2;
-playerUnits[0].maxhp += 2;
-playerUnits[0].hp += 2;
-playerUnits[0].speed += 2;
-addTalent(playerUnits[0], 10);
-for (let i = 1; i < 3; i++) {
+for (let i = 0; i < 3; i++) {
   playerUnits.push(new Unit(Math.floor(Math.random() * 3), i));
   playerUnits[i].attack[0] += 2;
   playerUnits[i].defense[0] += 2;
@@ -929,7 +922,6 @@ function loop() {
           if (enemyUnits[i].hp > 0)
             enemyUnits[i].wait = false;
         phase = 1;
-        console.log("bye bye");
       }
     } else if (phase == 1) {
       let go = true;
@@ -1016,6 +1008,11 @@ function heal(unitA, unitB) {
   unitB.hp += unitA.attack[0] + 2;
   if (unitB.hp > unitB.maxhp)
     unitB.hp = unitB.maxhp;
+  if (talentPresent(unitA, "self-heal")) {
+    unitA.hp += Math.floor((unitA.attack[0] + 2) / 2);
+    if (unitA.hp > unitA.maxhp)
+      unitA.hp = unitA.maxhp;
+  }
   unitA.exp += 10;
   for (let i = 0; i < playerUnits.length; i++)
     playerUnits[i].levelUp();
