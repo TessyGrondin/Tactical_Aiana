@@ -211,10 +211,23 @@ let activDetails = false;
 let detailedUnit;
 let healImage = new Image();
 healImage.src = "heal.png";
+let healButtons = [{x:35, y:290, frame:0}, {x:125, y:290, frame:0}, {x:215, y:290, frame:0}];
 let detailsImage = new Image();
 detailsImage.src = "details.png";
-let healButtons = [{x:35, y:290, frame:0}, {x:125, y:290, frame:0}, {x:215, y:290, frame:0}];
 let detailsButtons = [{x:35, y:250, frame:0}, {x:125, y:250, frame:0}, {x:215, y:250, frame:0}];
+
+
+
+
+
+
+
+
+let selectImage = new Image();
+selectImage.src = "select.png";
+let selectButtons = [{x:35, y:160, frame:0}, {x:125, y:160, frame:0}, {x:215, y:160, frame:0}];
+let endMapMenu = 0;
+
 
 
 
@@ -952,6 +965,42 @@ function loop() {
 
 
 
+    if (endMapMenu == 1) {
+      context.drawImage(shadow, 0, 0, shadow.width, shadow.height, 0, 0, canvas.width, canvas.height);
+      context.fillStyle = "white";
+      context.font = "20px Arial";
+      for (let i = 0; i < playerUnits.length; i++) {
+        if (playerUnits[i].hp > 0)  {
+          context.fillRect(40 + i * 90, 100, 48, 48);
+          context.drawImage(tileImage, (playerUnits[i].type + 11) * 32, 0, 32, 32, 40 + i * 90, 100, 48, 48);
+          context.drawImage(selectImage, selectButtons[i].frame * selectImage.width / 2, 0, selectImage.width / 2, selectImage.height, selectButtons[i].x, selectButtons[i].y, selectImage.width / 2, selectImage.height);
+        }
+      }
+    } else if (endMapMenu == 2) {
+      context.textAlign = "left";
+      context.drawImage(shadow, 0, 0, shadow.width, shadow.height, 0, 0, canvas.width, canvas.height);
+      context.drawImage(cross, crossFrame * cross.width / 2, 0, cross.width / 2, cross.height, canvas.width - cross.width / 2, 0, cross.width / 2, cross.height);
+      context.fillStyle = "white";
+      context.font = "20px Arial";
+      context.fillRect(20, 80, 48, 48);
+      context.drawImage(tileImage, (detailedUnit.type + 11) * 32, 0, 32, 32, 20, 80, 48, 48);
+      context.fillText("hp :" + detailedUnit.hp + "/" + detailedUnit.maxhp, 80, 120);
+      context.fillText("atk:" + (detailedUnit.attack[0] + detailedUnit.attack[1]), 180, 120);
+      context.fillText("def:" + (detailedUnit.defense[0] + detailedUnit.defense[1]), 80, 150);
+      context.fillText("spe:" + detailedUnit.speed, 180, 150);
+      let talentY = 190;
+      for (let i = 0; i < detailedUnit.ability.length; i++) {
+        context.fillText(detailedUnit.ability[i].name, 0, talentY);
+        talentY += 20;
+      }
+    }
+
+
+
+
+
+
+
     if (phase == 0) {
       let count = 0;
       for (let i = 0; i < playerUnits.length; i++)
@@ -1003,10 +1052,12 @@ function loop() {
       if (enemyUnits[i].hp < 1)
         change++;
     if (change == enemyUnits.length) {
-      mapNumber++;
-      inventory.money += 100;
+      // mapNumber++;
+      // inventory.money += 100;
       phase = 0;
-      generateNewMap();
+      if (endMapMenu == 0)
+        endMapMenu = 1;
+      // generateNewMap();
     }
     if (mapNumber == 5)
       end = true;
@@ -1260,6 +1311,15 @@ document.addEventListener('mousedown', function(e) {
 
   if (phase != 0)
     return;
+  if (endMapMenu == 1) {
+    for (let i = 0; i < 3; i++) {
+      if (relativeX >= selectButtons[i].x && relativeX < selectButtons[i].x + healImage.width / 2 && relativeY >= selectButtons[i].y && relativeY < selectButtons[i].y + healImage.height) {
+        selectButtons[i].frame = 1;
+        return;
+      }
+    }
+    return;
+  }
   if (enemyOnClick != -1 && ((selected != -1 && getDistance(map.p[selected], map.e[enemyOnClick]) != playerUnits[selected].range) || selected == -1)) {
     activDetails = true;
     detailedUnit = enemyUnits[enemyOnClick];
@@ -1291,19 +1351,26 @@ document.addEventListener('mouseup', function(e) {
   let relativeX = e.x - canvas.offsetLeft;
   let relativeY = e.y - canvas.offsetTop;
 
-  if (!activMenu && !activDetails)
+  if (!activMenu && !activDetails && endMapMenu == 0)
     return;
   crossFrame = 0;
   for (let i = 0; i < 3; i++)
     healButtons[i].frame = 0;
   for (let i = 0; i < 3; i++)
     detailsButtons[i].frame = 0;
-  if (activDetails && relativeX >= canvas.width - cross.width / 2 && relativeX < canvas.width && relativeY >= 0 && relativeY < cross.height) {
-    activDetails = false;
-    return;
+  for (let i = 0; i < 3; i++)
+    selectButtons[i].frame = 0;
+  if (endMapMenu == 1) {
+    for (let i = 0; i < 3; i++) {
+      if (relativeX >= selectButtons[i].x && relativeX < selectButtons[i].x + healImage.width / 2 && relativeY >= selectButtons[i].y && relativeY < selectButtons[i].y + healImage.height) {
+        detailedUnit = playerUnits[i];
+        endMapMenu = 2;
+        return;
+      }
+    }
   }
-  if (relativeX >= canvas.width - cross.width / 2 && relativeX < canvas.width && relativeY >= 0 && relativeY < cross.height) {
-    activMenu = false;
+  if (endMapMenu == 2 && relativeX >= canvas.width - cross.width / 2 && relativeX < canvas.width && relativeY >= 0 && relativeY < cross.height) {
+    endMapMenu = 1;
     return;
   }
   for (let i = 0; i < 3; i++) {
@@ -1311,6 +1378,14 @@ document.addEventListener('mouseup', function(e) {
       usePotion(playerUnits[i]);
       return;
     }
+  }
+  if (activDetails && relativeX >= canvas.width - cross.width / 2 && relativeX < canvas.width && relativeY >= 0 && relativeY < cross.height) {
+    activDetails = false;
+    return;
+  }
+  if (relativeX >= canvas.width - cross.width / 2 && relativeX < canvas.width && relativeY >= 0 && relativeY < cross.height) {
+    activMenu = false;
+    return;
   }
   for (let i = 0; i < 3; i++) {
     if (relativeX >= detailsButtons[i].x && relativeX < detailsButtons[i].x + healImage.width / 2 && relativeY >= detailsButtons[i].y && relativeY < detailsButtons[i].y + healImage.height) {
