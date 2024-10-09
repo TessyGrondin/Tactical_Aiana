@@ -40,7 +40,7 @@ let shownTalent = [
 function selectTalent() {
   for (let i = 0; i < 3; i++) {
     shownTalent[i][0] = dispTalents[i][Math.floor(Math.random() * dispTalents[i].length)]
-    if (dispTalents[i].length > 1)
+    if (dispTalents[i].length < 1)
       continue;
     let a = Math.floor(Math.random() * dispTalents[i].length);
     while (a == shownTalent[i][0])
@@ -404,7 +404,7 @@ function findEnemy(pos) {
 
 
 let phase = 0;
-let enemyToMove = 2;
+let enemyToMove = 1;
 let mapNumber = 0;
 
 
@@ -1026,6 +1026,11 @@ function loop() {
         context.fillText(detailedUnit.ability[i].name, 0, talentY);
         talentY += 20;
       }
+      for (let i = 0; i < 2; i++) {
+        context.fillText(talents[shownTalent[detailedUnit.binding][i]].name, 0, talentY);
+        drawSplit(talents[shownTalent[detailedUnit.binding][i]].description, 10, talentY + 20, 20);
+        talentY += 70;
+      }
     }
 
 
@@ -1088,8 +1093,10 @@ function loop() {
       // mapNumber++;
       // inventory.money += 100;
       phase = 0;
-      if (endMapMenu == 0)
+      if (endMapMenu == 0) {
+        selectTalent();
         endMapMenu = 1;
+      }
       // generateNewMap();
     }
     if (mapNumber == 5)
@@ -1438,14 +1445,16 @@ document.addEventListener('mouseup', function(e) {
 function increment() {
   if (phase != 1)
     return;
-  if (enemyToMove == enemyUnits.length) {
-    enemyToMove = 2;
+  if (enemyToMove + 1 >= enemyUnits.length) {
+    enemyToMove = 1;
     return;
   }
+  enemyToMove++;
+  if (enemyUnits[enemyToMove].hp < 1 || enemyUnits[enemyToMove].wait)
+    return;
   if (enemyUnits[enemyToMove].type != 2 || !goHealing(enemyUnits[enemyToMove]))
     chooseTarget(enemyUnits[enemyToMove]);
   enemyUnits[enemyToMove].wait = true;
-  enemyToMove++;
 }
 
 setInterval(increment, 500);
