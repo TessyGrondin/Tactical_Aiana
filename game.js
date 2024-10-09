@@ -25,6 +25,39 @@ let talents = [
   {name:"cross attack", description:"inflict att - 2 to enemies on the\nsame line and column"},
 ]
 
+let dispTalents = [
+  [0, 1, 2, 3, 4],
+  [0, 1, 2, 3, 4],
+  [0, 1, 2, 3, 4]
+]
+
+let shownTalent = [
+  [-1, -1],
+  [-1, -1],
+  [-1, -1]
+]
+
+function selectTalent() {
+  for (let i = 0; i < 3; i++) {
+    shownTalent[i][0] = dispTalents[i][Math.floor(Math.random() * dispTalents[i].length)]
+    if (dispTalents[i].length > 1)
+      continue;
+    let a = Math.floor(Math.random() * dispTalents[i].length);
+    while (a == shownTalent[i][0])
+      a = Math.floor(Math.random() * dispTalents[i].length);
+    shownTalent[i][1] = a;
+  }
+}
+
+function assignTalent(index) {
+  addTalent(detailedUnit, index * detailedUnit.type);
+  let newTab = [];
+  for (let i = 0; i < dispTalents[detailedUnit.binding].length; i++)
+    if (dispTalents[detailedUnit.binding][i] != index)
+      newTab.push(dispTalents[detailedUnit.binding][i]);
+  dispTalents[detailedUnit.binding] = newTab;
+}
+
 function talentPresent(unit, talent) {
   for (let i = 0; i < unit.ability.length; i++)
     if (unit.ability[i].name == talent)
