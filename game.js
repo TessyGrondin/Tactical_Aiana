@@ -39,18 +39,19 @@ let shownTalent = [
 
 function selectTalent() {
   for (let i = 0; i < 3; i++) {
-    shownTalent[i][0] = dispTalents[i][Math.floor(Math.random() * dispTalents[i].length)]
+    let a = Math.floor(Math.random() * dispTalents[i].length);
+    shownTalent[i][0] = dispTalents[i][a];
     if (dispTalents[i].length < 1)
       continue;
-    let a = Math.floor(Math.random() * dispTalents[i].length);
-    while (a == shownTalent[i][0])
-      a = Math.floor(Math.random() * dispTalents[i].length);
-    shownTalent[i][1] = a;
+    let b = Math.floor(Math.random() * dispTalents[i].length);
+    while (b == a)
+      b = Math.floor(Math.random() * dispTalents[i].length);
+    shownTalent[i][1] = dispTalents[i][b];
   }
 }
 
 function assignTalent(index) {
-  addTalent(detailedUnit, index * detailedUnit.type);
+  addTalent(detailedUnit, index + 5 * detailedUnit.type);
   let newTab = [];
   for (let i = 0; i < dispTalents[detailedUnit.binding].length; i++)
     if (dispTalents[detailedUnit.binding][i] != index)
@@ -1030,11 +1031,14 @@ function loop() {
         context.fillText(detailedUnit.ability[i].name, 0, talentY);
         talentY += 20;
       }
+      talentY += 40;
       for (let i = 0; i < 2; i++) {
-        context.fillText(talents[shownTalent[detailedUnit.binding][i]].name, 0, talentY);
-        drawSplit(talents[shownTalent[detailedUnit.binding][i]].description, 10, talentY + 20, 20);
-        talentY += 70;
-        context.drawImage(numberImage, (talentButtons[i].frame + i * 2) * (numberImage.width / 4), 0, numberImage.width / 4, numberImage.height, talentButtons[i].x, talentButtons[i].y, numberImage.height * 1.5, numberImage.height * 1.5);
+        if (shownTalent[detailedUnit.binding][i] >= 0) {
+          context.fillText(talents[shownTalent[detailedUnit.binding][i] + 5 * detailedUnit.type].name, 0, talentY);
+          drawSplit(talents[shownTalent[detailedUnit.binding][i] + 5 * detailedUnit.type].description, 10, talentY + 20, 20);
+          talentY += 70;
+          context.drawImage(numberImage, (talentButtons[i].frame + i * 2) * (numberImage.width / 4), 0, numberImage.width / 4, numberImage.height, talentButtons[i].x, talentButtons[i].y, numberImage.height * 1.5, numberImage.height * 1.5);
+        }
       }
     }
 
@@ -1054,6 +1058,7 @@ function loop() {
           if (enemyUnits[i].hp > 0)
             enemyUnits[i].wait = false;
         phase = 1;
+        console.log("end of player phase")
       }
     } else if (phase == 1) {
       let go = true;
@@ -1068,12 +1073,14 @@ function loop() {
           if (playerUnits[i].hp > 1)
             playerUnits[i].wait = false;
         phase = 2;
+        console.log("end of enemy phase")
       }
     } else if (phase == 2) {
       goToSpot(enemyUnits[1], map.e[1], map.exit);
       if (map.e[1].x == map.exit.x && map.e[1].y == map.exit.y)
         enemyUnits[1].hp = 0;
       phase = 3;
+      console.log("end of thief phase")
     } else {
       if (enemyUnits[0].hp > 0) {
         enemyUnits[0].hp += 2;
@@ -1082,6 +1089,7 @@ function loop() {
         chooseTarget(enemyUnits[0]);
       }
       phase = 0;
+      console.log("end of boss phase");
     }
 
 
@@ -1096,13 +1104,16 @@ function loop() {
         change++;
     if (change == enemyUnits.length) {
       phase = 0;
-      if (endMapMenu == 0) {
+      if (endMapMenu == 0 && mapNumber < 5) {
         selectTalent();
         endMapMenu = 1;
       }
     }
-    if (mapNumber == 5)
+    if (mapNumber == 5) {
       end = true;
+      return;
+    }
+
 
 
 
@@ -1117,6 +1128,8 @@ function loop() {
     if (death == playerUnits.length)
       end = true;
   } else {
+    console.log("end");
+    context.textAlign = "center";
     context.fillStyle = "black";
     context.font = "30px Arial";
     context.fillText("money : " + inventory.money, canvas.width / 2, 30);
@@ -1351,7 +1364,7 @@ document.addEventListener('mousedown', function(e) {
   let unitOnClick = findUnit({y:Math.floor(relativeY / 32), x:Math.floor(relativeX / 32)});
   let enemyOnClick = findEnemy({y:Math.floor(relativeY / 32), x:Math.floor(relativeX / 32)});
 
-  if (phase != 0)
+  if (phase != 0 || end || menu)
     return;
   if (endMapMenu == 1) {
     for (let i = 0; i < 3; i++) {
@@ -1406,7 +1419,7 @@ document.addEventListener('mouseup', function(e) {
   let relativeX = e.x - canvas.offsetLeft;
   let relativeY = e.y - canvas.offsetTop;
 
-  if (!activMenu && !activDetails && endMapMenu == 0)
+  if ((!activMenu && !activDetails && endMapMenu == 0) || phase != 0 || end || menu)
     return;
   crossFrame = 0;
   for (let i = 0; i < 3; i++)
@@ -1436,9 +1449,10 @@ document.addEventListener('mouseup', function(e) {
     }
     for (let i = 0; i < 2; i++) {
       if (relativeX >= talentButtons[i].x && relativeX < talentButtons[i].x + numberImage.width / 4 * 1.5 && relativeY >= talentButtons[i].y && relativeY < talentButtons[i].y + numberImage.height * 1.5) {
-        addTalent(detailedUnit, talentButtons[i].value);
+        assignTalent(talentButtons[i].value);
         endMapMenu = 0;
         mapNumber++;
+        console.log("mapNumber : " + mapNumber)
         inventory.money += 100;
         generateNewMap();
         return;
