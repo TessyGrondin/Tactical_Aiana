@@ -260,6 +260,10 @@ let selectImage = new Image();
 selectImage.src = "select.png";
 let selectButtons = [{x:35, y:160, frame:0}, {x:125, y:160, frame:0}, {x:215, y:160, frame:0}];
 let endMapMenu = 0;
+let numberImage = new Image();
+numberImage.src = "number.png";
+let talentButtons = [{x:canvas.width / 2 - 64, y:canvas.height - 32 * 1.5, frame:0, value:-1},
+                     {x:canvas.width / 2 + 32 * 0.5, y:canvas.height - 32 * 1.5, frame:0, value:-1}];
 
 
 
@@ -1030,6 +1034,7 @@ function loop() {
         context.fillText(talents[shownTalent[detailedUnit.binding][i]].name, 0, talentY);
         drawSplit(talents[shownTalent[detailedUnit.binding][i]].description, 10, talentY + 20, 20);
         talentY += 70;
+        context.drawImage(numberImage, (talentButtons[i].frame + i * 2) * (numberImage.width / 4), 0, numberImage.width / 4, numberImage.height, talentButtons[i].x, talentButtons[i].y, numberImage.height * 1.5, numberImage.height * 1.5);
       }
     }
 
@@ -1070,12 +1075,12 @@ function loop() {
         enemyUnits[1].hp = 0;
       phase = 3;
     } else {
-      if (enemyUnits[0].hp < 1)
-        return;
-      enemyUnits[0].hp += 2;
-      if (enemyUnits[0].hp > enemyUnits[0].maxhp)
-        enemyUnits[0].hp = enemyUnits[0].maxhp;
-      chooseTarget(enemyUnits[0]);
+      if (enemyUnits[0].hp > 0) {
+        enemyUnits[0].hp += 2;
+        if (enemyUnits[0].hp > enemyUnits[0].maxhp)
+          enemyUnits[0].hp = enemyUnits[0].maxhp;
+        chooseTarget(enemyUnits[0]);
+      }
       phase = 0;
     }
 
@@ -1360,6 +1365,19 @@ document.addEventListener('mousedown', function(e) {
     }
     return;
   }
+  if (endMapMenu == 2) {
+    if (relativeX > canvas.width - cross.width / 2 && relativeX < canvas.width && relativeY > 0 && relativeY < cross.height) {
+      crossFrame = 1;
+      return;
+    }
+    for (let i = 0; i < 2; i++) {
+      if (relativeX >= talentButtons[i].x && relativeX < talentButtons[i].x + numberImage.width / 4 * 1.5 && relativeY >= talentButtons[i].y && relativeY < talentButtons[i].y + numberImage.height * 1.5) {
+        talentButtons[i].frame = 1;
+        return;
+      }
+    }
+    return;
+  }
   if (enemyOnClick != -1 && ((selected != -1 && getDistance(map.p[selected], map.e[enemyOnClick]) != playerUnits[selected].range) || selected == -1)) {
     activDetails = true;
     detailedUnit = enemyUnits[enemyOnClick];
@@ -1369,7 +1387,7 @@ document.addEventListener('mousedown', function(e) {
     crossFrame = 1;
     return;
   }
-  if (unitOnClick == -1 && selected == -1 && !activMenu && enemyOnClick == -1) {
+  if (endMapMenu == 0 && unitOnClick == -1 && selected == -1 && !activMenu && enemyOnClick == -1) {
     activMenu = true;
     return;
   }
@@ -1408,10 +1426,13 @@ document.addEventListener('mouseup', function(e) {
         return;
       }
     }
-  }
-  if (endMapMenu == 2 && relativeX >= canvas.width - cross.width / 2 && relativeX < canvas.width && relativeY >= 0 && relativeY < cross.height) {
-    endMapMenu = 1;
     return;
+  }
+  if (endMapMenu == 2) {
+    if (relativeX >= canvas.width - cross.width / 2 && relativeX < canvas.width && relativeY >= 0 && relativeY < cross.height) {
+      endMapMenu = 1;
+      return;
+    }
   }
   for (let i = 0; i < 3; i++) {
     if (relativeX >= healButtons[i].x && relativeX < healButtons[i].x + healImage.width / 2 && relativeY >= healButtons[i].y && relativeY < healButtons[i].y + healImage.height) {
