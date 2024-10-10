@@ -1095,14 +1095,11 @@ function loop() {
       if (enemyUnits[i].hp < 1)
         change++;
     if (change == enemyUnits.length) {
-      // mapNumber++;
-      // inventory.money += 100;
       phase = 0;
       if (endMapMenu == 0) {
         selectTalent();
         endMapMenu = 1;
       }
-      // generateNewMap();
     }
     if (mapNumber == 5)
       end = true;
@@ -1418,10 +1415,14 @@ document.addEventListener('mouseup', function(e) {
     detailsButtons[i].frame = 0;
   for (let i = 0; i < 3; i++)
     selectButtons[i].frame = 0;
+  for (let i = 0; i < 2; i++)
+    talentButtons[i].frame = 0;
   if (endMapMenu == 1) {
     for (let i = 0; i < 3; i++) {
       if (relativeX >= selectButtons[i].x && relativeX < selectButtons[i].x + healImage.width / 2 && relativeY >= selectButtons[i].y && relativeY < selectButtons[i].y + healImage.height) {
         detailedUnit = playerUnits[i];
+        talentButtons[0].value = shownTalent[detailedUnit.binding][0];
+        talentButtons[1].value = shownTalent[detailedUnit.binding][1];
         endMapMenu = 2;
         return;
       }
@@ -1433,6 +1434,17 @@ document.addEventListener('mouseup', function(e) {
       endMapMenu = 1;
       return;
     }
+    for (let i = 0; i < 2; i++) {
+      if (relativeX >= talentButtons[i].x && relativeX < talentButtons[i].x + numberImage.width / 4 * 1.5 && relativeY >= talentButtons[i].y && relativeY < talentButtons[i].y + numberImage.height * 1.5) {
+        addTalent(detailedUnit, talentButtons[i].value);
+        endMapMenu = 0;
+        mapNumber++;
+        inventory.money += 100;
+        generateNewMap();
+        return;
+      }
+    }
+    return;
   }
   for (let i = 0; i < 3; i++) {
     if (relativeX >= healButtons[i].x && relativeX < healButtons[i].x + healImage.width / 2 && relativeY >= healButtons[i].y && relativeY < healButtons[i].y + healImage.height) {
