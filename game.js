@@ -791,7 +791,7 @@ function chooseTarget(unit) {
 
 
 let end = false;
-let menu = false;
+let menu = true;
 
 function generateNewMap() {
   let select = Math.floor(Math.random() * premadeMaps.length);
@@ -1058,7 +1058,6 @@ function loop() {
           if (enemyUnits[i].hp > 0)
             enemyUnits[i].wait = false;
         phase = 1;
-        console.log("end of player phase")
       }
     } else if (phase == 1) {
       let go = true;
@@ -1073,14 +1072,12 @@ function loop() {
           if (playerUnits[i].hp > 1)
             playerUnits[i].wait = false;
         phase = 2;
-        console.log("end of enemy phase")
       }
     } else if (phase == 2) {
       goToSpot(enemyUnits[1], map.e[1], map.exit);
       if (map.e[1].x == map.exit.x && map.e[1].y == map.exit.y)
         enemyUnits[1].hp = 0;
       phase = 3;
-      console.log("end of thief phase")
     } else {
       if (enemyUnits[0].hp > 0) {
         enemyUnits[0].hp += 2;
@@ -1089,7 +1086,6 @@ function loop() {
         chooseTarget(enemyUnits[0]);
       }
       phase = 0;
-      console.log("end of boss phase");
     }
 
 
@@ -1128,7 +1124,6 @@ function loop() {
     if (death == playerUnits.length)
       end = true;
   } else {
-    console.log("end");
     context.textAlign = "center";
     context.fillStyle = "black";
     context.font = "30px Arial";
@@ -1452,7 +1447,6 @@ document.addEventListener('mouseup', function(e) {
         assignTalent(talentButtons[i].value);
         endMapMenu = 0;
         mapNumber++;
-        console.log("mapNumber : " + mapNumber)
         inventory.money += 100;
         generateNewMap();
         return;
