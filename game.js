@@ -249,6 +249,7 @@ let healButtons = [{x:35, y:290, frame:0}, {x:125, y:290, frame:0}, {x:215, y:29
 let detailsImage = new Image();
 detailsImage.src = "details.png";
 let detailsButtons = [{x:35, y:250, frame:0}, {x:125, y:250, frame:0}, {x:215, y:250, frame:0}];
+let detailSide = 3;
 
 
 
@@ -872,34 +873,26 @@ function loop() {
     for (let i = 0; i < grid.length; i++) {
       context.drawImage(tileImage, 0, 0, 32, 32, grid[i].x, grid[i].y, 32, 32);
       if (grid[i].danger.length > 0)
-        context.drawImage(tileImage, 7 * 32, 0, 32, 32, grid[i].x, grid[i].y, 32, 32);
+        context.drawImage(tileImage, 11 * 32, 0, 32, 32, grid[i].x, grid[i].y, 32, 32);
       if (grid[i].highlight == 1)
-        context.drawImage(tileImage, 8 * 32, 0, 32, 32, grid[i].x, grid[i].y, 32, 32);
+        context.drawImage(tileImage, 12 * 32, 0, 32, 32, grid[i].x, grid[i].y, 32, 32);
       if (grid[i].highlight == 2)
-        context.drawImage(tileImage, 9 * 32, 0, 32, 32, grid[i].x, grid[i].y, 32, 32);
+        context.drawImage(tileImage, 13 * 32, 0, 32, 32, grid[i].x, grid[i].y, 32, 32);
     }
     for (let i = 0; i < map.w.length; i++)
       context.drawImage(tileImage, 2 * 32, 0, 32, 32, grid[coordinate(map.w[i].x, map.w[i].y)].x, grid[coordinate(map.w[i].x, map.w[i].y)].y, 32, 32);
     context.drawImage(tileImage, 32, 0, 32, 32, grid[coordinate(map.exit.x, map.exit.y)].x, grid[coordinate(map.exit.x, map.exit.y)].y, 32, 32);
-    if (enemyUnits[0].hp > 0)
-      context.drawImage(tileImage, 5* 32, 0, 32, 32, grid[coordinate(map.e[0].x, map.e[0].y)].x, grid[coordinate(map.e[0].x, map.e[0].y)].y, 32, 32);
     if (enemyUnits[1].hp > 0)
-      context.drawImage(tileImage, 6* 32, 0, 32, 32, grid[coordinate(map.e[1].x, map.e[1].y)].x, grid[coordinate(map.e[1].x, map.e[1].y)].y, 32, 32);
-    for (let i = 2; i < map.e.length; i++)
-      if (enemyUnits[i].hp > 0)
-        context.drawImage(tileImage, 4 * 32, 0, 32, 32, grid[coordinate(map.e[i].x, map.e[i].y)].x, grid[coordinate(map.e[i].x, map.e[i].y)].y, 32, 32);
-    for (let i = 0; i < map.p.length; i++)
-      if (playerUnits[i].hp > 0)
-        context.drawImage(tileImage, 3 * 32, 0, 32, 32, grid[coordinate(map.p[i].x, map.p[i].y)].x, grid[coordinate(map.p[i].x, map.p[i].y)].y, 32, 32);
+      context.drawImage(tileImage, 9 * 32, 0, 32, 32, grid[coordinate(map.e[1].x, map.e[1].y)].x, grid[coordinate(map.e[1].x, map.e[1].y)].y, 32, 32);
 
     context.font = "20px Arial";
     context.fillStyle = "white";
     for (let i = 0; i < playerUnits.length; i++) {
       if (playerUnits[i].hp < 1)
         continue;
-      context.drawImage(tileImage, (11 + playerUnits[i].type) * 32, 0, 32, 32, grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].x, grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].y, 32, 32);
+      context.drawImage(tileImage, (3 + playerUnits[i].type) * 32, 0, 32, 32, grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].x, grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].y, 32, 32);
       if (playerUnits[i].wait)
-        context.drawImage(tileImage, 10 * 32, 0, 32, 32, grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].x, grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].y, 32, 32);
+        context.drawImage(tileImage, 14 * 32, 0, 32, 32, grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].x, grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].y, 32, 32);
       drawHp(playerUnits[i].maxhp, grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].x, grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].y);
       context.fillStyle = "blue";
       drawHp(playerUnits[i].hp, grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].x, grid[coordinate(map.p[playerUnits[i].binding].x, map.p[playerUnits[i].binding].y)].y);
@@ -909,12 +902,14 @@ function loop() {
       if (enemyUnits[i].hp < 1)
         continue;
       if (i != 1)
-        context.drawImage(tileImage, (11 + enemyUnits[i].type) * 32, 0, 32, 32, grid[coordinate(map.e[enemyUnits[i].binding].x, map.e[enemyUnits[i].binding].y)].x, grid[coordinate(map.e[enemyUnits[i].binding].x, map.e[enemyUnits[i].binding].y)].y, 32, 32);
+        context.drawImage(tileImage, (6 + enemyUnits[i].type) * 32, 0, 32, 32, grid[coordinate(map.e[enemyUnits[i].binding].x, map.e[enemyUnits[i].binding].y)].x, grid[coordinate(map.e[enemyUnits[i].binding].x, map.e[enemyUnits[i].binding].y)].y, 32, 32);
       drawHp(enemyUnits[i].maxhp, grid[coordinate(map.e[enemyUnits[i].binding].x, map.e[enemyUnits[i].binding].y)].x, grid[coordinate(map.e[enemyUnits[i].binding].x, map.e[enemyUnits[i].binding].y)].y);
       context.fillStyle = "red";
       drawHp(enemyUnits[i].hp, grid[coordinate(map.e[enemyUnits[i].binding].x, map.e[enemyUnits[i].binding].y)].x, grid[coordinate(map.e[enemyUnits[i].binding].x, map.e[enemyUnits[i].binding].y)].y);
       context.fillStyle = "white";
     }
+    if (enemyUnits[0].hp > 0)
+      context.drawImage(tileImage, 10 * 32, 0, 32, 32, grid[coordinate(map.e[0].x, map.e[0].y)].x, grid[coordinate(map.e[0].x, map.e[0].y)].y, 32, 32);
 
 
 
@@ -952,7 +947,7 @@ function loop() {
       context.fillStyle = "white";
       context.font = "20px Arial";
       context.fillRect(20, 80, 48, 48);
-      context.drawImage(tileImage, (detailedUnit.type + 11) * 32, 0, 32, 32, 20, 80, 48, 48);
+      context.drawImage(tileImage, (detailedUnit.type + detailSide) * 32, 0, 32, 32, 20, 80, 48, 48);
       context.fillText("hp :" + detailedUnit.hp + "/" + detailedUnit.maxhp, 80, 120);
       context.fillText("atk:" + (detailedUnit.attack[0] + detailedUnit.attack[1]), 180, 120);
       context.fillText("def:" + (detailedUnit.defense[0] + detailedUnit.defense[1]), 80, 150);
@@ -973,7 +968,7 @@ function loop() {
     } else if (activMenu) {
       context.drawImage(shadow, 0, 0, shadow.width, shadow.height, 0, 0, canvas.width, canvas.height);
       context.drawImage(cross, crossFrame * cross.width / 2, 0, cross.width / 2, cross.height, canvas.width - cross.width / 2, 0, cross.width / 2, cross.height);
-      context.drawImage(tileImage, 14 * 32, 0, 32, 32, 0, 0, 64, 64);
+      context.drawImage(tileImage, 15 * 32, 0, 32, 32, 0, 0, 64, 64);
       context.fillStyle = "white";
       context.font = "30px Arial";
       context.fillText("x " + inventory.potion, 84, 50);
@@ -981,7 +976,7 @@ function loop() {
       for (let i = 0; i < playerUnits.length; i++) {
         context.fillStyle = "white";
         context.fillRect(40 + i * 90, 100, 48, 48);
-        context.drawImage(tileImage, (playerUnits[i].type + 11) * 32, 0, 32, 32, 40 + i * 90, 100, 48, 48);
+        context.drawImage(tileImage, (playerUnits[i].type + 3) * 32, 0, 32, 32, 40 + i * 90, 100, 48, 48);
         context.fillText(playerUnits[i].hp + "/" + playerUnits[i].maxhp, 65 + i * 90, 170);
         context.fillText("atk:" + (playerUnits[i].attack[0] + playerUnits[i].attack[1]), 65 + i * 90, 190);
         context.fillText("def:" + (playerUnits[i].defense[0] + playerUnits[i].defense[1]), 65 + i * 90, 210);
