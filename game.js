@@ -1005,7 +1005,7 @@ function loop() {
       for (let i = 0; i < playerUnits.length; i++) {
         if (playerUnits[i].hp > 0)  {
           context.fillRect(40 + i * 90, 100, 48, 48);
-          context.drawImage(tileImage, (playerUnits[i].type + 11) * 32, 0, 32, 32, 40 + i * 90, 100, 48, 48);
+          context.drawImage(tileImage, (playerUnits[i].type + 3) * 32, 0, 32, 32, 40 + i * 90, 100, 48, 48);
           context.drawImage(selectImage, selectButtons[i].frame * selectImage.width / 2, 0, selectImage.width / 2, selectImage.height, selectButtons[i].x, selectButtons[i].y, selectImage.width / 2, selectImage.height);
         }
       }
@@ -1016,7 +1016,7 @@ function loop() {
       context.fillStyle = "white";
       context.font = "20px Arial";
       context.fillRect(20, 80, 48, 48);
-      context.drawImage(tileImage, (detailedUnit.type + 11) * 32, 0, 32, 32, 20, 80, 48, 48);
+      context.drawImage(tileImage, (detailedUnit.type + 3) * 32, 0, 32, 32, 20, 80, 48, 48);
       context.fillText("hp :" + detailedUnit.hp + "/" + detailedUnit.maxhp, 80, 120);
       context.fillText("atk:" + (detailedUnit.attack[0] + detailedUnit.attack[1]), 180, 120);
       context.fillText("def:" + (detailedUnit.defense[0] + detailedUnit.defense[1]), 80, 150);
