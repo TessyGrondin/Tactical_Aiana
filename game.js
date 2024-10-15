@@ -237,6 +237,8 @@ function usePotion(unit) {
 
 let cross = new Image();
 cross.src = "cross.png";
+let background = new Image();
+background.src = "placeholder.png";
 let crossFrame = 0;
 let shadow = new Image();
 shadow.src = "shadow.png";
@@ -868,6 +870,7 @@ function loop() {
   requestAnimationFrame(loop);
   context.clearRect(0,0,canvas.width,canvas.height);
   if (menu) {
+    context.drawImage(background, 0, 0, background.width, background.height, 0, 0, canvas.width, canvas.height);
     context.fillText("tap to start", canvas.width / 2, canvas.height - 10);
   } else if (!end) {
     for (let i = 0; i < grid.length; i++) {
@@ -1119,6 +1122,7 @@ function loop() {
     if (death == playerUnits.length)
       end = true;
   } else {
+    context.drawImage(background, 0, 0, background.width, background.height, 0, 0, canvas.width, canvas.height);
     context.textAlign = "center";
     context.fillStyle = "black";
     context.font = "30px Arial";
